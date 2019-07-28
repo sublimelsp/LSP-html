@@ -6,7 +6,7 @@ import subprocess
 
 from LSP.plugin.core.handlers import LanguageHandler
 from LSP.plugin.core.settings import ClientConfig, LanguageConfig
-from LSP.plugin.core.registry import register_language_handler
+from LSP.plugin.core.registry import register_language_handler, client_configs
 
 
 package_path = os.path.dirname(__file__)
@@ -33,6 +33,7 @@ def onCommandDone():
     logAndShowMessage('LSP-html: Server installation completed.')
     
     register_language_handler(LspHtmlPlugin())
+    client_configs.update_configs()
 
 
 def runCommand(onExit, popenArgs):
