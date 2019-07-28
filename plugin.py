@@ -6,14 +6,11 @@ import subprocess
 
 from LSP.plugin.core.handlers import LanguageHandler
 from LSP.plugin.core.settings import ClientConfig, LanguageConfig
-from LSP.plugin.core.registry import register_language_handler, client_configs
-
-
-package_path = os.path.dirname(__file__)
-server_path = os.path.join(package_path, 'node_modules', 'vscode-html-languageserver-bin', 'htmlServerMain.js')
 
 
 def plugin_loaded():
+    package_path = os.path.join(sublime.packages_path(), 'LSP-html')
+    server_path = os.path.join(package_path, 'node_modules', 'vscode-html-languageserver-bin', 'htmlServerMain.js')
     print('LSP-html: Server {} installed.'.format('is' if os.path.isfile(server_path) else 'is not' ))
 
     # install the node_modules if not installed
@@ -25,22 +22,19 @@ def plugin_loaded():
 
         runCommand(
             onCommandDone,
-            ["npm", "install", "--verbose", "--prefix", package_path ]
+            ["npm", "install", "--verbose", "--prefix", package_path]
         )
 
 
 def onCommandDone():
-    logAndShowMessage('LSP-html: Server installation completed.')
-    
-    register_language_handler(LspHtmlPlugin())
-    client_configs.update_configs()
+    logAndShowMessage('LSP-html: Server installed.')
 
 
 def runCommand(onExit, popenArgs):
     """
     Runs the given args in a subprocess.Popen, and then calls the function
     onExit when the subprocess completes.
-    onExit is a callable object, and popenArgs is a list/tuple of args that 
+    onExit is a callable object, and popenArgs is a list/tuple of args that
     would give to subprocess.Popen.
     """
     def runInThread(onExit, popenArgs):
@@ -72,10 +66,13 @@ class LspHtmlPlugin(LanguageHandler):
 
     @property
     def config(self) -> ClientConfig:
+        package_path = os.path.join(sublime.packages_path(), 'LSP-html')
+        server_path = os.path.join(package_path, 'node_modules', 'vscode-html-languageserver-bin', 'htmlServerMain.js')
         return ClientConfig(
             name='lsp-html',
             binary_args=[
-                "html-languageserver",
+                "node",
+                server_path,
                 "--stdio"
             ],
             tcp_port=None,
