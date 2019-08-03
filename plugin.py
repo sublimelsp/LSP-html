@@ -7,10 +7,10 @@ import subprocess
 from LSP.plugin.core.handlers import LanguageHandler
 from LSP.plugin.core.settings import ClientConfig, LanguageConfig
 
+package_path = os.path.dirname(__file__)
+server_path = os.path.join(package_path, 'node_modules', 'vscode-html-languageserver-bin', 'htmlServerMain.js')
 
 def plugin_loaded():
-    package_path = os.path.join(sublime.packages_path(), 'LSP-html')
-    server_path = os.path.join(package_path, 'node_modules', 'vscode-html-languageserver-bin', 'htmlServerMain.js')
     print('LSP-html: Server {} installed.'.format('is' if os.path.isfile(server_path) else 'is not' ))
 
     # install the node_modules if not installed
@@ -22,7 +22,7 @@ def plugin_loaded():
 
         runCommand(
             onCommandDone,
-            ["npm", "install", "--verbose", "--prefix", package_path]
+            ["npm", "install", "--verbose", "--prefix", package_path, package_path]
         )
 
 
@@ -39,7 +39,10 @@ def runCommand(onExit, popenArgs):
     """
     def runInThread(onExit, popenArgs):
         try:
-            subprocess.check_call(popenArgs)
+            if sublime.platform() == 'windows':
+                subprocess.check_call(popenArgs, shell=True)
+            else:
+                subprocess.check_call(popenArgs)
             onExit()
         except subprocess.CalledProcessError as error:
             logAndShowMessage('LSP-html: Error while installing the server.', error)
@@ -66,8 +69,6 @@ class LspHtmlPlugin(LanguageHandler):
 
     @property
     def config(self) -> ClientConfig:
-        package_path = os.path.join(sublime.packages_path(), 'LSP-html')
-        server_path = os.path.join(package_path, 'node_modules', 'vscode-html-languageserver-bin', 'htmlServerMain.js')
         return ClientConfig(
             name='lsp-html',
             binary_args=[
