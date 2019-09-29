@@ -5,16 +5,17 @@ import threading
 import subprocess
 
 from LSP.plugin.core.handlers import LanguageHandler
-from LSP.plugin.core.settings import ClientConfig, LanguageConfig
+from LSP.plugin.core.settings import ClientConfig, LanguageConfig, read_client_config
 
 package_path = os.path.dirname(__file__)
 server_path = os.path.join(package_path, 'node_modules', 'vscode-html-languageserver-bin', 'htmlServerMain.js')
 
 def plugin_loaded():
-    print('LSP-html: Server {} installed.'.format('is' if os.path.isfile(server_path) else 'is not' ))
+    is_server_installed = os.path.isfile(server_path)
+    print('LSP-html: Server {} installed.'.format('is' if is_server_installed else 'is not' ))
 
     # install the node_modules if not installed
-    if not os.path.isdir(os.path.join(package_path, 'node_modules')):
+    if not is_server_installed:
         # this will be called only when the plugin gets:
         # - installed for the first time,
         # - or when updated on package control
@@ -69,29 +70,17 @@ class LspHtmlPlugin(LanguageHandler):
 
     @property
     def config(self) -> ClientConfig:
-        return ClientConfig(
-            name='lsp-html',
-            binary_args=[
-                "node",
+        settings = sublime.load_settings("LSP-html.sublime-settings")
+        client_configuration = settings.get('client')
+        default_configuration = {
+            "command": [
+                'node',
                 server_path,
-                "--stdio"
-            ],
-            tcp_port=None,
-            enabled=True,
-            init_options=dict(),
-            settings=dict(),
-            env=dict(),
-            languages=[
-                LanguageConfig(
-                    'html',
-                    ['text.html.basic'],
-                    [
-                        "Packages/HTML/HTML.sublime-syntax",
-                        "Packages/PHP/PHP.sublime-syntax"
-                    ]
-                )
+                '--stdio'
             ]
-        )
+        }
+        default_configuration.update(client_configuration)
+        return read_client_config('lsp-html', default_configuration)
 
     def on_start(self, window) -> bool:
         if not is_node_installed():
