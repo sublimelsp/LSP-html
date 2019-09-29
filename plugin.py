@@ -77,6 +77,16 @@ class LspHtmlPlugin(LanguageHandler):
                 'node',
                 server_path,
                 '--stdio'
+            ],
+            "languages": [
+                {
+                    "languageId": "html",
+                    "scopes": ["stext.html.basic"],
+                    "syntaxes": [
+                        "Packages/HTML/HTML.sublime-syntax",
+                        "Packages/PHP/PHP.sublime-syntax"
+                    ]
+                }
             ]
         }
         default_configuration.update(client_configuration)
