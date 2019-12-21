@@ -81,7 +81,7 @@ class LspHtmlPlugin(LanguageHandler):
             "languages": [
                 {
                     "languageId": "html",
-                    "scopes": ["stext.html.basic"],
+                    "scopes": ["text.html.basic"],
                     "syntaxes": [
                         "Packages/HTML/HTML.sublime-syntax",
                         "Packages/PHP/PHP.sublime-syntax"
