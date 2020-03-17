@@ -62,7 +62,7 @@ popd || exit
 
 pushd "${SRC_DIR}" || exit
 
-./node_modules/typescript/bin/tsc -p .
+./node_modules/typescript/bin/tsc --newLine LF -p .
 
 cp package.json "${REPO_DIR}"
 cp package-lock.json "${REPO_DIR}"
