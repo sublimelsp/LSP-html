@@ -4,7 +4,7 @@ import sublime
 
 from LSP.plugin.core.handlers import LanguageHandler
 from LSP.plugin.core.settings import ClientConfig, read_client_config
-from .utils.resources import ServerNpmResource
+from lsp_utils import ServerNpmResource
 
 PACKAGE_NAME = 'LSP-html'
 SETTINGS_FILENAME = 'LSP-html.sublime-settings'
