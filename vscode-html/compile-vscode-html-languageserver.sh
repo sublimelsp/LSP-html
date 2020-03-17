@@ -13,7 +13,9 @@ DIST_DIR="${REPO_DIR}/out"
 
 pushd "${REPO_DIR}" || exit
 
-rm -rf "${SRC_DIR}" "${DIST_DIR}" "package.json" "package-lock.json"
+rm -rf \
+    "${SRC_DIR}" "${DIST_DIR}" \
+    "package.json" "package-lock.json"
 
 # or get the source via git clone
 # git clone --depth=1 https://github.com/vscode-langservers/vscode-html-languageserver "${SRC_DIR}"
