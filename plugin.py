@@ -30,11 +30,11 @@ def is_node_installed():
 class LspHtmlPlugin(LanguageHandler):
     @property
     def name(self) -> str:
-        return 'lsp-html'
+        return PACKAGE_NAME.lower()
 
     @property
     def config(self) -> ClientConfig:
-        settings = sublime.load_settings("LSP-html.sublime-settings")
+        settings = sublime.load_settings(SETTINGS_FILENAME)
         client_configuration = settings.get('client')
         if client_configuration is None:
             client_configuration = {}
