@@ -20,15 +20,15 @@
                     "command": "edit_settings",
                     "args": {
                       "base_file": "${packages}/LSP-html/LSP-html.sublime-settings",
-                      "default": "{\n\t$0\n}\n"
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+                      "default": "// Settings in here override those in \"LSP-html/LSP-html.sublime-settings\",\n\n{\n\t$0\n}\n",
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ]

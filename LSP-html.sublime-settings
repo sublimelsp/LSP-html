@@ -1,29 +1,29 @@
 {
-	"client" : {
-		"enabled": true,
-		"languages": [
-			{
-				"languageId": "html",
-				"scopes": ["text.html.basic"],
-				"syntaxes": [
-					"Packages/HTML/HTML.sublime-syntax",
-					"Packages/PHP/PHP.sublime-syntax",
-				],
-			},
-		],
-		"initializationOptions": {
-			"provideFormatter": true,
-			"embeddedLanguages": {
-				"css": true,
-				"html": true,
-				"javascript": true,
-			},
+	"enabled": true,
+	"languages": [
+		{
+			"languageId": "html",
+			"scopes": [
+				"text.html.basic",
+			],
+			"syntaxes": [
+				"Packages/HTML/HTML.sublime-syntax",
+				"Packages/PHP/PHP.sublime-syntax",
+			],
 		},
-		"settings": {
-			"html": {
-				"format": {
-					"enable": true,
-				},
+	],
+	"initializationOptions": {
+		"provideFormatter": true,
+		"embeddedLanguages": {
+			"css": true,
+			"html": true,
+			"javascript": true,
+		},
+	},
+	"settings": {
+		"html": {
+			"format": {
+				"enable": true,
 			},
 		},
 	},

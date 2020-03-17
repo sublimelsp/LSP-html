@@ -33,19 +33,40 @@ class LspHtmlPlugin(LanguageHandler):
 
     @property
     def config(self) -> ClientConfig:
-        settings = sublime.load_settings(SETTINGS_FILENAME)
-        client_configuration = settings.get('client')
-        if client_configuration is None:
-            client_configuration = {}
-
         # Calling setup() also here as this might run before `plugin_loaded`.
         # Will be a no-op if already ran.
         # See https://github.com/sublimelsp/LSP/issues/899
         server.setup()
 
-        default_configuration = self.get_default_configuration()
-        default_configuration.update(client_configuration)
+        configuration = self.migrate_and_read_configuration()
+
+        default_configuration = {
+            'enabled': True,
+            'command': ['node', server.binary_path, '--stdio'],
+        }
+
+        default_configuration.update(configuration)
+
         return read_client_config('lsp-html', default_configuration)
+
+    def migrate_and_read_configuration(self) -> dict:
+        settings = {}
+        loaded_settings = sublime.load_settings(SETTINGS_FILENAME)
+
+        if loaded_settings:
+            if loaded_settings.has('client'):
+                client = loaded_settings.get('client')
+                loaded_settings.erase('client')
+                # Migrate old keys
+                for key in client:
+                    loaded_settings.set(key, client[key])
+                sublime.save_settings(SETTINGS_FILENAME)
+
+            # Read configuration keys
+            for key in ['languages', 'initializationOptions', 'settings']:
+                settings[key] = loaded_settings.get(key)
+
+        return settings
 
     def on_start(self, window) -> bool:
         if not is_node_installed():
@@ -55,34 +76,3 @@ class LspHtmlPlugin(LanguageHandler):
 
     def on_initialized(self, client) -> None:
         pass   # extra initialization here.
-
-    def get_default_configuration(self) -> dict:
-        return {
-            "enabled": True,
-            "command": ['node', server.binary_path, '--stdio'],
-            "languages": [
-                {
-                    "languageId": "html",
-                    "scopes": ["text.html.basic"],
-                    "syntaxes": [
-                        "Packages/HTML/HTML.sublime-syntax",
-                        "Packages/PHP/PHP.sublime-syntax",
-                    ],
-                },
-            ],
-            "initializationOptions": {
-                "provideFormatter": True,
-                "embeddedLanguages": {
-                    "css": True,
-                    "html": True,
-                    "javascript": True,
-                },
-            },
-            "settings": {
-                "html": {
-                    "format": {
-                        "enable": True,
-                    },
-                },
-            },
-        }
