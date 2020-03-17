@@ -36,6 +36,16 @@ pushd "${SRC_DIR}" || exit
 
 npm install
 npm install --save typescript
+
+popd || exit
+
+
+# ------- #
+# compile #
+# ------- #
+
+pushd "${SRC_DIR}" || exit
+
 cat << EOF > tsconfig.json
 {
     "compilerOptions": {
@@ -55,19 +65,19 @@ cat << EOF > tsconfig.json
 }
 EOF
 
+./node_modules/typescript/bin/tsc --newLine LF -p .
+
 popd || exit
 
 
-# ------- #
-# compile #
-# ------- #
+# -------------------- #
+# collect output files #
+# -------------------- #
 
-pushd "${SRC_DIR}" || exit
+pushd "${REPO_DIR}" || exit
 
-./node_modules/typescript/bin/tsc --newLine LF -p .
-
-cp package.json "${REPO_DIR}"
-cp package-lock.json "${REPO_DIR}"
-mv out "${DIST_DIR}"
+mv "${SRC_DIR}/out" "${DIST_DIR}"
+cp "${SRC_DIR}/package.json" "${REPO_DIR}"
+cp "${SRC_DIR}/package-lock.json" "${REPO_DIR}"
 
 popd || exit
