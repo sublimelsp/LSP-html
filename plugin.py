@@ -43,7 +43,21 @@ class LspHtmlPlugin(LanguageHandler):
         # See https://github.com/sublimelsp/LSP/issues/899
         server.setup()
 
-        default_configuration = {
+        default_configuration = self.get_default_configuration()
+        default_configuration.update(client_configuration)
+        return read_client_config('lsp-html', default_configuration)
+
+    def on_start(self, window) -> bool:
+        if not is_node_installed():
+            sublime.status_message('Please install Node.js for the HTML Language Server to work.')
+            return False
+        return True
+
+    def on_initialized(self, client) -> None:
+        pass   # extra initialization here.
+
+    def get_default_configuration(self) -> dict:
+        return {
             "enabled": True,
             "command": ['node', server.binary_path, '--stdio'],
             "languages": [
@@ -72,15 +86,3 @@ class LspHtmlPlugin(LanguageHandler):
                 },
             },
         }
-
-        default_configuration.update(client_configuration)
-        return read_client_config('lsp-html', default_configuration)
-
-    def on_start(self, window) -> bool:
-        if not is_node_installed():
-            sublime.status_message('Please install Node.js for the HTML Language Server to work.')
-            return False
-        return True
-
-    def on_initialized(self, client) -> None:
-        pass   # extra initialization here.
