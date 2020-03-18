@@ -17,13 +17,13 @@
 			"javascript": true,
 		},
 		"dataPaths": [],
-		"provideFormatter": false,
+		"provideFormatter": true,
 	},
 	"settings": {
 		"html": {
 			"customData": [],
 			"format": {
-				"enable": false,
+				"enable": true,
 				"wrapLineLength": 120,
 				"unformatted": "wbr",
 				"contentUnformatted": "pre,code,textarea",
