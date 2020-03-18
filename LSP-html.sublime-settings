@@ -1,5 +1,4 @@
 {
-	"enabled": true,
 	"languages": [
 		{
 			"languageId": "html",
@@ -13,18 +12,120 @@
 		},
 	],
 	"initializationOptions": {
-		"provideFormatter": true,
 		"embeddedLanguages": {
 			"css": true,
-			"html": true,
 			"javascript": true,
 		},
+		"dataPaths": [],
+		"provideFormatter": true,
 	},
 	"settings": {
 		"html": {
+			"customData": [],
 			"format": {
 				"enable": true,
+				"wrapLineLength": 120,
+				"unformatted": "wbr",
+				"contentUnformatted": "pre,code,textarea",
+				"indentInnerHtml": false,
+				"preserveNewLines": true,
+				"maxPreserveNewLines": null,
+				"indentHandlebars": false,
+				"endWithNewline": false,
+				"extraLiners": "head, body, /html",
+				"wrapAttributes": "auto",
 			},
+			"suggest": {
+				"html5": true,
+			},
+			"validate": {
+				"scripts": true,
+				"styles": true,
+			},
+			"autoClosingTags": true,
+			"mirrorCursorOnMatchingTag": false,
+		},
+		"css": {
+			"customData": [],
+			"completion": {
+				"triggerPropertyValueCompletion": true,
+				"completePropertyWithSemicolon": true,
+			},
+			"validate": true,
+			"lint": {
+				"compatibleVendorPrefixes": "ignore",
+				"vendorPrefix": "warning",
+				"duplicateProperties": "ignore",
+				"emptyRules": "warning",
+				"importStatement": "ignore",
+				"boxModel": "ignore",
+				"universalSelector": "ignore",
+				"zeroUnits": "ignore",
+				"fontFaceProperties": "warning",
+				"hexColorLength": "error",
+				"argumentsInColorFunction": "error",
+				"unknownProperties": "warning",
+				"validProperties": [],
+				"ieHack": "ignore",
+				"unknownVendorSpecificProperties": "ignore",
+				"propertyIgnoredDueToDisplay": "warning",
+				"important": "ignore",
+				"float": "ignore",
+				"idSelector": "ignore",
+				"unknownAtRules": "warning",
+			},
+		},
+		"javascript": {
+			"referencesCodeLens": {
+				"enabled": false,
+				"showOnAllFunctions": false,
+			},
+			"suggest": {
+				"completeFunctionCalls": false,
+				"includeAutomaticOptionalChainCompletions": true,
+				"names": true,
+				"paths": true,
+				"autoImports": true,
+				"completeJSDocs": true,
+				"enabled": true,
+			},
+			"validate": {
+				"enable": true,
+			},
+			"format": {
+				"enable": true,
+				"insertSpaceAfterCommaDelimiter": true,
+				"insertSpaceAfterConstructor": false,
+				"insertSpaceAfterSemicolonInForStatements": true,
+				"insertSpaceBeforeAndAfterBinaryOperators": true,
+				"insertSpaceAfterKeywordsInControlFlowStatements": true,
+				"insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+				"insertSpaceBeforeFunctionParenthesis": false,
+				"insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
+				"insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
+				"insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
+				"insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": false,
+				"insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": false,
+				"placeOpenBraceOnNewLineForFunctions": false,
+				"placeOpenBraceOnNewLineForControlBlocks": false,
+				"semicolons": "ignore",
+			},
+			"implicitProjectConfig": {
+				"checkJs": true,
+				"experimentalDecorators": false,
+			},
+			"suggestionActions": {
+				"enabled": true,
+			},
+			"preferences": {
+				"quoteStyle": "single",
+				"importModuleSpecifier": "auto",
+				"renameShorthandProperties": true,
+			},
+			"updateImportsOnFileMove": {
+				"enabled": "prompt",
+			},
+			"autoClosingTags": true,
 		},
 	},
 }

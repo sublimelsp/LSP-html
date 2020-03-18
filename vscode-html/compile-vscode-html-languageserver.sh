@@ -20,9 +20,7 @@ rm -rf \
 # or get the source via git clone
 # git clone --depth=1 https://github.com/vscode-langservers/vscode-html-languageserver "${SRC_DIR}"
 
-wget https://github.com/vscode-langservers/vscode-html-languageserver/archive/master.zip -O src.zip
-unzip src.zip
-rm -f src.zip
+curl -L https://github.com/vscode-langservers/vscode-html-languageserver/archive/master.tar.gz | tar -xzv
 mv vscode-html-languageserver-master "${SRC_DIR}"
 
 popd || exit
