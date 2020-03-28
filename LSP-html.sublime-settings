@@ -1,16 +1,5 @@
 {
-	"languages": [
-		{
-			"languageId": "html",
-			"scopes": [
-				"text.html.basic",
-			],
-			"syntaxes": [
-				"Packages/HTML/HTML.sublime-syntax",
-				"Packages/PHP/PHP.sublime-syntax",
-			],
-		},
-	],
+	"languages": [{"languageId": "html", "scopes": ["text.html.basic"]}],
 	"initializationOptions": {
 		"embeddedLanguages": {
 			"css": true,
