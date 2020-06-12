@@ -4,6 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getFoldingRanges = void 0;
 const languageModes_1 = require("./languageModes");
 function getFoldingRanges(languageModes, document, maxRanges, _cancellationToken) {
     let htmlMode = languageModes.getMode('html');

@@ -19,10 +19,10 @@ var TagCloseRequest;
 (function (TagCloseRequest) {
     TagCloseRequest.type = new vscode_languageserver_1.RequestType('html/tag');
 })(TagCloseRequest || (TagCloseRequest = {}));
-var MatchingTagPositionRequest;
-(function (MatchingTagPositionRequest) {
-    MatchingTagPositionRequest.type = new vscode_languageserver_1.RequestType('html/matchingTagPosition');
-})(MatchingTagPositionRequest || (MatchingTagPositionRequest = {}));
+var OnTypeRenameRequest;
+(function (OnTypeRenameRequest) {
+    OnTypeRenameRequest.type = new vscode_languageserver_1.RequestType('html/onTypeRename');
+})(OnTypeRenameRequest || (OnTypeRenameRequest = {}));
 var SemanticTokenRequest;
 (function (SemanticTokenRequest) {
     SemanticTokenRequest.type = new vscode_languageserver_1.RequestType('html/semanticTokens');
@@ -438,20 +438,20 @@ connection.onRenameRequest((params, token) => {
         return null;
     }, null, `Error while computing rename for ${params.textDocument.uri}`, token);
 });
-connection.onRequest(MatchingTagPositionRequest.type, (params, token) => {
+connection.onRequest(OnTypeRenameRequest.type, (params, token) => {
     return runner_1.runSafe(() => {
         const document = documents.get(params.textDocument.uri);
         if (document) {
             const pos = params.position;
             if (pos.character > 0) {
                 const mode = languageModes.getModeAtPosition(document, languageModes_1.Position.create(pos.line, pos.character - 1));
-                if (mode && mode.findMatchingTagPosition) {
-                    return mode.findMatchingTagPosition(document, pos);
+                if (mode && mode.doOnTypeRename) {
+                    return mode.doOnTypeRename(document, pos);
                 }
             }
         }
         return null;
-    }, null, `Error while computing matching tag position for ${params.textDocument.uri}`, token);
+    }, null, `Error while computing synced regions for ${params.textDocument.uri}`, token);
 });
 let semanticTokensProvider;
 function getSemanticTokenProvider() {

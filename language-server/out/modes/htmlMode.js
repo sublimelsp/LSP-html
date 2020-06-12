@@ -4,6 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getHTMLMode = void 0;
 const languageModelCache_1 = require("../languageModelCache");
 const pathCompletion_1 = require("./pathCompletion");
 function getHTMLMode(htmlLanguageService, workspace) {
@@ -79,6 +80,10 @@ function getHTMLMode(htmlLanguageService, workspace) {
         findMatchingTagPosition(document, position) {
             const htmlDocument = htmlDocuments.get(document);
             return htmlLanguageService.findMatchingTagPosition(document, position, htmlDocument);
+        },
+        doOnTypeRename(document, position) {
+            const htmlDocument = htmlDocuments.get(document);
+            return htmlLanguageService.findOnTypeRenameRanges(document, position, htmlDocument);
         },
         dispose() {
             htmlDocuments.dispose();

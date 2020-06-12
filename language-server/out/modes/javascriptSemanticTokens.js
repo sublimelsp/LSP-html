@@ -4,6 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getSemanticTokens = exports.getSemanticTokenLegend = void 0;
 const ts = require("typescript");
 function getSemanticTokenLegend() {
     if (tokenTypes.length !== 11 /* _ */) {

@@ -4,6 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getPathCompletionParticipant = void 0;
 const path = require("path");
 const fs = require("fs");
 const vscode_uri_1 = require("vscode-uri");

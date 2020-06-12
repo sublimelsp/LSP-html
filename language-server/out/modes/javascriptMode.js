@@ -4,6 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getJavaScriptMode = void 0;
 const languageModelCache_1 = require("../languageModelCache");
 const languageModes_1 = require("./languageModes");
 const strings_1 = require("../utils/strings");
@@ -15,10 +16,10 @@ let jquery_d_ts = path_1.join(__dirname, '../lib/jquery.d.ts'); // when packaged
 if (!ts.sys.fileExists(jquery_d_ts)) {
     jquery_d_ts = path_1.join(__dirname, '../../lib/jquery.d.ts'); // from source
 }
-function getJavaScriptMode(documentRegions, languageId) {
+function getJavaScriptMode(documentRegions, languageId, workspace) {
     let jsDocuments = languageModelCache_1.getLanguageModelCache(10, 60, document => documentRegions.get(document).getEmbeddedDocument(languageId));
     const workingFile = languageId === 'javascript' ? 'vscode://javascript/1.js' : 'vscode://javascript/2.ts'; // the same 'file' is used for all contents
-    let compilerOptions = { allowNonTsExtensions: true, allowJs: true, lib: ['lib.es6.d.ts'], target: ts.ScriptTarget.Latest, moduleResolution: ts.ModuleResolutionKind.Classic };
+    let compilerOptions = { allowNonTsExtensions: true, allowJs: true, lib: ['lib.es6.d.ts'], target: ts.ScriptTarget.Latest, moduleResolution: ts.ModuleResolutionKind.Classic, experimentalDecorators: false };
     let currentTextDocument;
     let scriptFileVersion = 0;
     function updateCurrentTextDocument(doc) {
@@ -62,8 +63,9 @@ function getJavaScriptMode(documentRegions, languageId) {
         getId() {
             return languageId;
         },
-        doValidation(document) {
+        doValidation(document, settings = workspace.settings) {
             updateCurrentTextDocument(document);
+            host.getCompilationSettings()['experimentalDecorators'] = settings && settings.javascript && settings.javascript.implicitProjectConfig.experimentalDecorators;
             const syntaxDiagnostics = jsLanguageService.getSyntacticDiagnostics(workingFile);
             const semanticDiagnostics = jsLanguageService.getSemanticDiagnostics(workingFile);
             return syntaxDiagnostics.concat(semanticDiagnostics).map((diag) => {
