@@ -4,6 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.binarySearch = exports.mergeSort = exports.contains = exports.pushAll = void 0;
 function pushAll(to, from) {
     if (from) {
         for (const e of from) {
