@@ -23,9 +23,9 @@ const embeddedSupport_1 = require("./embeddedSupport");
 const htmlMode_1 = require("./htmlMode");
 const javascriptMode_1 = require("./javascriptMode");
 __exportStar(require("vscode-html-languageservice"), exports);
-function getLanguageModes(supportedLanguages, workspace, clientCapabilities, customDataProviders) {
-    const htmlLanguageService = vscode_html_languageservice_1.getLanguageService({ customDataProviders, clientCapabilities });
-    const cssLanguageService = vscode_css_languageservice_1.getCSSLanguageService({ clientCapabilities });
+function getLanguageModes(supportedLanguages, workspace, clientCapabilities, requestService) {
+    const htmlLanguageService = vscode_html_languageservice_1.getLanguageService({ clientCapabilities, fileSystemProvider: requestService });
+    const cssLanguageService = vscode_css_languageservice_1.getCSSLanguageService({ clientCapabilities, fileSystemProvider: requestService });
     let documentRegions = languageModelCache_1.getLanguageModelCache(10, 60, document => embeddedSupport_1.getDocumentRegions(htmlLanguageService, document));
     let modelCaches = [];
     modelCaches.push(documentRegions);
@@ -39,6 +39,9 @@ function getLanguageModes(supportedLanguages, workspace, clientCapabilities, cus
         modes['typescript'] = javascriptMode_1.getJavaScriptMode(documentRegions, 'typescript', workspace);
     }
     return {
+        async updateDataProviders(dataProviders) {
+            htmlLanguageService.setDataProviders(true, dataProviders);
+        },
         getModeAtPosition(document, position) {
             let languageId = documentRegions.get(document).getLanguageAtPosition(position);
             if (languageId) {

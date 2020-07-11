@@ -6,7 +6,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getDocumentContext = void 0;
 const strings_1 = require("../utils/strings");
-const url = require("url");
+const requests_1 = require("../requests");
 function getDocumentContext(documentUri, workspaceFolders) {
     function getRootFolder() {
         for (let folder of workspaceFolders) {
@@ -23,19 +23,13 @@ function getDocumentContext(documentUri, workspaceFolders) {
     return {
         resolveReference: (ref, base = documentUri) => {
             if (ref[0] === '/') { // resolve absolute path against the current workspace folder
-                if (strings_1.startsWith(base, 'file://')) {
-                    let folderUri = getRootFolder();
-                    if (folderUri) {
-                        return folderUri + ref.substr(1);
-                    }
+                let folderUri = getRootFolder();
+                if (folderUri) {
+                    return folderUri + ref.substr(1);
                 }
             }
-            try {
-                return url.resolve(base, ref);
-            }
-            catch (_a) {
-                return '';
-            }
+            base = base.substr(0, base.lastIndexOf('/') + 1);
+            return requests_1.resolvePath(base, ref);
         },
     };
 }

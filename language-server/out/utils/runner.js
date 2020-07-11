@@ -4,7 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runSafe = exports.runSafeAsync = exports.formatError = void 0;
+exports.runSafe = exports.formatError = void 0;
 const vscode_languageserver_1 = require("vscode-languageserver");
 function formatError(message, err) {
     if (err instanceof Error) {
@@ -20,7 +20,7 @@ function formatError(message, err) {
     return message;
 }
 exports.formatError = formatError;
-function runSafeAsync(func, errorVal, errorMessage, token) {
+function runSafe(func, errorVal, errorMessage, token) {
     return new Promise((resolve) => {
         setImmediate(() => {
             if (token.isCancellationRequested) {
@@ -38,32 +38,6 @@ function runSafeAsync(func, errorVal, errorMessage, token) {
                 console.error(formatError(errorMessage, e));
                 resolve(errorVal);
             });
-        });
-    });
-}
-exports.runSafeAsync = runSafeAsync;
-function runSafe(func, errorVal, errorMessage, token) {
-    return new Promise((resolve) => {
-        setImmediate(() => {
-            if (token.isCancellationRequested) {
-                resolve(cancelValue());
-            }
-            else {
-                try {
-                    let result = func();
-                    if (token.isCancellationRequested) {
-                        resolve(cancelValue());
-                        return;
-                    }
-                    else {
-                        resolve(result);
-                    }
-                }
-                catch (e) {
-                    console.error(formatError(errorMessage, e));
-                    resolve(errorVal);
-                }
-            }
         });
     });
 }

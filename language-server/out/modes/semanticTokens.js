@@ -19,12 +19,12 @@ function newSemanticTokenProvider(languageModes) {
     }
     return {
         legend,
-        getSemanticTokens(document, ranges) {
+        async getSemanticTokens(document, ranges) {
             const allTokens = [];
             for (let mode of languageModes.getAllModesInDocument(document)) {
                 if (mode.getSemanticTokens) {
                     const mapping = legendMappings[mode.getId()];
-                    const tokens = mode.getSemanticTokens(document);
+                    const tokens = await mode.getSemanticTokens(document);
                     applyTypesMapping(tokens, mapping.types);
                     applyModifiersMapping(tokens, mapping.modifiers);
                     for (let token of tokens) {
