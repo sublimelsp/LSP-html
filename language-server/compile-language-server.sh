@@ -77,7 +77,7 @@ cat << EOF > tsconfig.json
         "outDir": "./out"
     },
     "files": [
-        "src/htmlServerMain.ts"
+        "src/node/htmlServerMain.ts"
     ]
 }
 EOF
