@@ -2,6 +2,7 @@
 	"languages": [
 		{
 			"languageId": "html",
+			// ST3 configuration
 			"scopes": [
 				"text.html.basic",
 			],
@@ -9,6 +10,9 @@
 				"Packages/HTML/HTML.sublime-syntax",
 				"Packages/PHP/PHP.sublime-syntax",
 			],
+			// ST4 configuration
+			"document_selector": "text.html.basic | embedding.php",
+			"feature_selector": "text.html",
 		},
 	],
 	"initializationOptions": {
