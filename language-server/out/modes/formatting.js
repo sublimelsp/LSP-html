@@ -8,7 +8,7 @@ exports.format = void 0;
 const languageModes_1 = require("./languageModes");
 const arrays_1 = require("../utils/arrays");
 const strings_1 = require("../utils/strings");
-function format(languageModes, document, formatRange, formattingOptions, settings, enabledModes) {
+async function format(languageModes, document, formatRange, formattingOptions, settings, enabledModes) {
     let result = [];
     let endPos = formatRange.end;
     let endOffset = document.offsetAt(endPos);
@@ -35,7 +35,7 @@ function format(languageModes, document, formatRange, formattingOptions, setting
     while (i < allRanges.length && !isHTML(allRanges[i])) {
         let range = allRanges[i];
         if (!range.attributeValue && range.mode && range.mode.format) {
-            let edits = range.mode.format(document, languageModes_1.Range.create(startPos, range.end), formattingOptions, settings);
+            let edits = await range.mode.format(document, languageModes_1.Range.create(startPos, range.end), formattingOptions, settings);
             arrays_1.pushAll(result, edits);
         }
         startPos = range.end;
@@ -48,7 +48,7 @@ function format(languageModes, document, formatRange, formattingOptions, setting
     formatRange = languageModes_1.Range.create(startPos, formatRange.end);
     // perform a html format and apply changes to a new document
     let htmlMode = languageModes.getMode('html');
-    let htmlEdits = htmlMode.format(document, formatRange, formattingOptions, settings);
+    let htmlEdits = await htmlMode.format(document, formatRange, formattingOptions, settings);
     let htmlFormattedContent = languageModes_1.TextDocument.applyEdits(document, htmlEdits);
     let newDocument = languageModes_1.TextDocument.create(document.uri + '.tmp', document.languageId, document.version, htmlFormattedContent);
     try {
@@ -60,7 +60,7 @@ function format(languageModes, document, formatRange, formattingOptions, setting
         for (let r of embeddedRanges) {
             let mode = r.mode;
             if (mode && mode.format && enabledModes[mode.getId()] && !r.attributeValue) {
-                let edits = mode.format(newDocument, r, formattingOptions, settings);
+                let edits = await mode.format(newDocument, r, formattingOptions, settings);
                 for (let edit of edits) {
                     embeddedEdits.push(edit);
                 }

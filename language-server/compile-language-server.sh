@@ -38,7 +38,7 @@ fi
 
 temp_zip="src-${ref}.zip"
 curl -L "${GITHUB_REPO_URL}/archive/${ref}.zip" -o "${temp_zip}"
-unzip -z "${temp_zip}" > update-info.log
+unzip -z "${temp_zip}" | tr -d '\r' > update-info.log
 unzip "${temp_zip}" && rm -f "${temp_zip}"
 mv "${GITHUB_REPO_NAME}-"* "${SRC_DIR}"
 
@@ -77,7 +77,7 @@ cat << EOF > tsconfig.json
         "outDir": "./out"
     },
     "files": [
-        "src/htmlServerMain.ts"
+        "src/node/htmlServerMain.ts"
     ]
 }
 EOF
