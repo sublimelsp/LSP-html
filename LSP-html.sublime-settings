@@ -7,11 +7,10 @@
 				"text.html.basic",
 			],
 			"syntaxes": [
-				"Packages/HTML/HTML.sublime-syntax",
-				"Packages/PHP/PHP.sublime-syntax",
+				"Packages/HTML/HTML.sublime-syntax"
 			],
 			// ST4 configuration
-			"document_selector": "text.html.basic | embedding.php",
+			"document_selector": "text.html.basic",
 			"feature_selector": "text.html",
 		},
 	],
