@@ -34,7 +34,6 @@
 		"html.suggest.html5": true,
 		"html.validate.scripts": true,
 		"html.validate.styles": true,
-		"html.autoClosingTags": true,
 		"css.customData": [],
 		"css.completion.triggerPropertyValueCompletion": true,
 		"css.completion.completePropertyWithSemicolon": true,
@@ -92,6 +91,5 @@
 		"javascript.preferences.importModuleSpecifier": "auto",
 		"javascript.preferences.renameShorthandProperties": true,
 		"javascript.updateImportsOnFileMove.enabled": "prompt",
-		"javascript.autoClosingTags": true
 	}
 }

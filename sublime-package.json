@@ -120,11 +120,6 @@
                       "default": true,
                       "description": "Controls whether the built-in HTML language support validates embedded styles."
                     },
-                    "html.autoClosingTags": {
-                      "type": "boolean",
-                      "default": true,
-                      "description": "Enable/disable autoclosing of HTML tags."
-                    },
                     "html.trace.server": {
                       "type": "string",
                       "enum": [
