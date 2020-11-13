@@ -125,12 +125,6 @@
                       "default": true,
                       "description": "Enable/disable autoclosing of HTML tags."
                     },
-                    "html.mirrorCursorOnMatchingTag": {
-                      "type": "boolean",
-                      "default": false,
-                      "description": "Enable/disable mirroring cursor on matching HTML tag.",
-                      "deprecationMessage": "Deprecated in favor of `editor.renameOnType`"
-                    },
                     "html.trace.server": {
                       "type": "string",
                       "enum": [

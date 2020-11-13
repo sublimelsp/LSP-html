@@ -35,7 +35,6 @@
 		"html.validate.scripts": true,
 		"html.validate.styles": true,
 		"html.autoClosingTags": true,
-		"html.mirrorCursorOnMatchingTag": false,
 		"css.customData": [],
 		"css.completion.triggerPropertyValueCompletion": true,
 		"css.completion.completePropertyWithSemicolon": true,
