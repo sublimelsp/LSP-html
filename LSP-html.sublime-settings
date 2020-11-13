@@ -3,12 +3,8 @@
 		{
 			"languageId": "html",
 			// ST3 configuration
-			"scopes": [
-				"text.html.basic",
-			],
-			"syntaxes": [
-				"Packages/HTML/HTML.sublime-syntax"
-			],
+			"scopes": ["text.html.basic"],
+			"syntaxes": ["Packages/HTML/HTML.sublime-syntax"],
 			// ST4 configuration
 			"document_selector": "text.html.basic",
 			"feature_selector": "text.html",
