@@ -82,13 +82,13 @@ function startServer(connection, runtime) {
                 workspaceFolders.push({ name: '', uri: vscode_uri_1.URI.file(params.rootPath).toString() });
             }
         }
-        requestService = requests_1.getRequestService(params.initializationOptions.handledSchemas || ['file'], connection, runtime);
+        requestService = requests_1.getRequestService((initializationOptions === null || initializationOptions === void 0 ? void 0 : initializationOptions.handledSchemas) || ['file'], connection, runtime);
         const workspace = {
             get settings() { return globalSettings; },
             get folders() { return workspaceFolders; }
         };
-        languageModes = languageModes_1.getLanguageModes(initializationOptions ? initializationOptions.embeddedLanguages : { css: true, javascript: true }, workspace, params.capabilities, requestService);
-        const dataPaths = params.initializationOptions.dataPaths || [];
+        languageModes = languageModes_1.getLanguageModes((initializationOptions === null || initializationOptions === void 0 ? void 0 : initializationOptions.embeddedLanguages) || { css: true, javascript: true }, workspace, params.capabilities, requestService);
+        const dataPaths = (initializationOptions === null || initializationOptions === void 0 ? void 0 : initializationOptions.dataPaths) || [];
         customData_1.fetchHTMLDataProviders(dataPaths, requestService).then(dataProviders => {
             languageModes.updateDataProviders(dataProviders);
         });
@@ -110,7 +110,7 @@ function startServer(connection, runtime) {
             return c;
         }
         clientSnippetSupport = getClientCapability('textDocument.completion.completionItem.snippetSupport', false);
-        dynamicFormatterRegistration = getClientCapability('textDocument.rangeFormatting.dynamicRegistration', false) && (typeof params.initializationOptions.provideFormatter !== 'boolean');
+        dynamicFormatterRegistration = getClientCapability('textDocument.rangeFormatting.dynamicRegistration', false) && (typeof (initializationOptions === null || initializationOptions === void 0 ? void 0 : initializationOptions.provideFormatter) !== 'boolean');
         scopedSettingsSupport = getClientCapability('workspace.configuration', false);
         workspaceFoldersSupport = getClientCapability('workspace.workspaceFolders', false);
         foldingRangeLimit = getClientCapability('textDocument.foldingRange.rangeLimit', Number.MAX_VALUE);
@@ -119,7 +119,7 @@ function startServer(connection, runtime) {
             completionProvider: clientSnippetSupport ? { resolveProvider: true, triggerCharacters: ['.', ':', '<', '"', '=', '/'] } : undefined,
             hoverProvider: true,
             documentHighlightProvider: true,
-            documentRangeFormattingProvider: params.initializationOptions.provideFormatter === true,
+            documentRangeFormattingProvider: (initializationOptions === null || initializationOptions === void 0 ? void 0 : initializationOptions.provideFormatter) === true,
             documentLinkProvider: { resolveProvider: false },
             documentSymbolProvider: true,
             definitionProvider: true,
