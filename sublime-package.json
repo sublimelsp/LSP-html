@@ -1,0 +1,170 @@
+{
+  "contributions": {
+    "settings": [
+      {
+        "file_patterns": [
+          "/LSP-html.sublime-settings"
+        ],
+        "schema": {
+          "$id": "sublime://settings/LSP-html",
+          "definitions": {
+            "PluginConfig": {
+              "properties": {
+                "settings": {
+                  "properties": {
+                    "html.customData": {
+                      "type": "array",
+                      "markdownDescription": "A list of relative file paths pointing to JSON files following the [custom data format](https://github.com/microsoft/vscode-html-languageservice/blob/master/docs/customData.md).\n\nLSP-json loads custom data on startup to enhance its HTML support for the custom HTML tags, attributes and attribute values you specify in the JSON files.\n\nThe file paths are relative to workspace and only workspace folder settings are considered.",
+                      "default": [],
+                      "items": {
+                        "type": "string"
+                      },
+                    },
+                    "html.format.enable": {
+                      "type": "boolean",
+                      "default": true,
+                      "description": "Enable/disable default HTML formatter."
+                    },
+                    "html.format.wrapLineLength": {
+                      "type": "integer",
+                      "default": 120,
+                      "description": "Maximum amount of characters per line (0 = disable)."
+                    },
+                    "html.format.unformatted": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "default": "wbr",
+                      "markdownDescription": "List of tags, comma separated, that shouldn't be reformatted. `null` defaults to all tags listed at https://www.w3.org/TR/html5/dom.html#phrasing-content."
+                    },
+                    "html.format.contentUnformatted": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "default": "pre,code,textarea",
+                      "markdownDescription": "List of tags, comma separated, where the content shouldn't be reformatted. `null` defaults to the `pre` tag."
+                    },
+                    "html.format.indentInnerHtml": {
+                      "type": "boolean",
+                      "default": false,
+                      "markdownDescription": "Indent `<head>` and `<body>` sections."
+                    },
+                    "html.format.preserveNewLines": {
+                      "type": "boolean",
+                      "default": true,
+                      "description": "Controls whether existing line breaks before elements should be preserved. Only works before elements, not inside tags or for text."
+                    },
+                    "html.format.maxPreserveNewLines": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "default": null,
+                      "markdownDescription": "Maximum number of line breaks to be preserved in one chunk. Use `null` for unlimited."
+                    },
+                    "html.format.indentHandlebars": {
+                      "type": "boolean",
+                      "default": false,
+                      "markdownDescription": "Format and indent `{{#foo}}` and `{{/foo}}`."
+                    },
+                    "html.format.endWithNewline": {
+                      "type": "boolean",
+                      "default": false,
+                      "description": "End with a newline."
+                    },
+                    "html.format.extraLiners": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "default": "head, body, /html",
+                      "markdownDescription": "List of tags, comma separated, that should have an extra newline before them. `null` defaults to `\"head, body, /html\"`."
+                    },
+                    "html.format.wrapAttributes": {
+                      "type": "string",
+                      "default": "auto",
+                      "enum": [
+                        "auto",
+                        "force",
+                        "force-aligned",
+                        "force-expand-multiline",
+                        "aligned-multiple",
+                        "preserve",
+                        "preserve-aligned"
+                      ],
+                      "enumDescriptions": [
+                        "Wrap attributes only when line length is exceeded.",
+                        "Wrap each attribute except first.",
+                        "Wrap each attribute except first and keep aligned.",
+                        "Wrap each attribute.",
+                        "Wrap when line length is exceeded, align attributes vertically.",
+                        "Preserve wrapping of attributes",
+                        "Preserve wrapping of attributes but align.",
+                      ],
+                      "description": "Wrap attributes."
+                    },
+                    "html.suggest.html5": {
+                      "type": "boolean",
+                      "default": true,
+                      "description": "Controls whether the built-in HTML language support suggests HTML5 tags, properties and values."
+                    },
+                    "html.validate.scripts": {
+                      "type": "boolean",
+                      "default": true,
+                      "description": "Controls whether the built-in HTML language support validates embedded scripts."
+                    },
+                    "html.validate.styles": {
+                      "type": "boolean",
+                      "default": true,
+                      "description": "Controls whether the built-in HTML language support validates embedded styles."
+                    },
+                    "html.trace.server": {
+                      "type": "string",
+                      "enum": [
+                        "off",
+                        "messages",
+                        "verbose"
+                      ],
+                      "default": "off",
+                      "description": "Traces the communication between ST and the HTML language server."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "allOf": [
+            {
+              "$ref": "sublime://settings/LSP-plugin-base"
+            },
+            {
+              "$ref": "sublime://settings/LSP-html#/definitions/PluginConfig"
+            }
+          ]
+        }
+      },
+      {
+        "file_patterns": [
+          "/*.sublime-project"
+        ],
+        "schema": {
+          "properties": {
+            "settings": {
+              "properties": {
+                "LSP": {
+                  "properties": {
+                    "LSP-html": {
+                      "$ref": "sublime://settings/LSP-html#/definitions/PluginConfig"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+    ]
+  }
+}
