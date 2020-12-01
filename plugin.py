@@ -1,5 +1,5 @@
-import os
 from lsp_utils import NpmClientHandler
+import os
 import sublime
 
 
