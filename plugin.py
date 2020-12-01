@@ -16,10 +16,6 @@ class LspHtmlPlugin(NpmClientHandler):
     server_directory = 'language-server'
     server_binary_path = os.path.join(server_directory, 'out', 'node', 'htmlServerMain.js')
 
-    @classmethod
-    def install_in_cache(cls) -> bool:
-        return False
-
     def on_pre_server_command(self, command, done_callback):
         cmd = command["command"]
         if cmd == "editor.action.triggerSuggest":
