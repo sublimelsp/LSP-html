@@ -43,5 +43,5 @@ function runSafe(func, errorVal, errorMessage, token) {
 }
 exports.runSafe = runSafe;
 function cancelValue() {
-    return new vscode_languageserver_1.ResponseError(vscode_languageserver_1.ErrorCodes.RequestCancelled, 'Request cancelled');
+    return new vscode_languageserver_1.ResponseError(vscode_languageserver_1.LSPErrorCodes.RequestCancelled, 'Request cancelled');
 }

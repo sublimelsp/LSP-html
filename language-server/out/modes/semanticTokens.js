@@ -32,7 +32,7 @@ function newSemanticTokenProvider(languageModes) {
                     }
                 }
             }
-            return encodeTokens(allTokens, ranges);
+            return encodeTokens(allTokens, ranges, document);
         }
     };
 }
@@ -78,14 +78,13 @@ function applyModifiersMapping(tokens, modifiersMapping) {
         }
     }
 }
-const fullRange = [languageModes_1.Range.create(languageModes_1.Position.create(0, 0), languageModes_1.Position.create(Number.MAX_VALUE, 0))];
-function encodeTokens(tokens, ranges) {
+function encodeTokens(tokens, ranges, document) {
     const resultTokens = tokens.sort((d1, d2) => d1.start.line - d2.start.line || d1.start.character - d2.start.character);
     if (ranges) {
         ranges = ranges.sort((d1, d2) => d1.start.line - d2.start.line || d1.start.character - d2.start.character);
     }
     else {
-        ranges = fullRange;
+        ranges = [languageModes_1.Range.create(languageModes_1.Position.create(0, 0), languageModes_1.Position.create(document.lineCount, 0))];
     }
     let rangeIndex = 0;
     let currRange = ranges[rangeIndex++];

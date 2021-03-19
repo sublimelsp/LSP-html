@@ -25,8 +25,9 @@ function getHTMLMode(htmlLanguageService, workspace) {
             let completionList = htmlLanguageService.doComplete2(document, position, htmlDocument, documentContext, options);
             return completionList;
         },
-        async doHover(document, position) {
-            return htmlLanguageService.doHover(document, position, htmlDocuments.get(document));
+        async doHover(document, position, settings) {
+            var _a;
+            return htmlLanguageService.doHover(document, position, htmlDocuments.get(document), (_a = settings === null || settings === void 0 ? void 0 : settings.html) === null || _a === void 0 ? void 0 : _a.hover);
         },
         async findDocumentHighlight(document, position) {
             return htmlLanguageService.findDocumentHighlights(document, position, htmlDocuments.get(document));
@@ -76,9 +77,9 @@ function getHTMLMode(htmlLanguageService, workspace) {
             const htmlDocument = htmlDocuments.get(document);
             return htmlLanguageService.findMatchingTagPosition(document, position, htmlDocument);
         },
-        async doOnTypeRename(document, position) {
+        async doLinkedEditing(document, position) {
             const htmlDocument = htmlDocuments.get(document);
-            return htmlLanguageService.findOnTypeRenameRanges(document, position, htmlDocument);
+            return htmlLanguageService.findLinkedEditingRanges(document, position, htmlDocument);
         },
         dispose() {
             htmlDocuments.dispose();

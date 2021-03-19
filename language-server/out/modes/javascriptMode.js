@@ -58,9 +58,7 @@ function getLanguageServiceHost(scriptKind) {
             return compilerOptions;
         },
         dispose() {
-            if (jsLanguageService) {
-                jsLanguageService.then(s => s.dispose());
-            }
+            jsLanguageService.then(s => s.dispose());
         }
     };
 }
@@ -131,10 +129,10 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
             const jsLanguageService = await host.getLanguageService(jsDocument);
             let info = jsLanguageService.getQuickInfoAtPosition(jsDocument.uri, jsDocument.offsetAt(position));
             if (info) {
-                let contents = ts.displayPartsToString(info.displayParts);
+                const contents = ts.displayPartsToString(info.displayParts);
                 return {
                     range: convertRange(jsDocument, info.textSpan),
-                    contents: languageModes_1.MarkedString.fromPlainText(contents)
+                    contents: ['```typescript', contents, '```'].join('\n')
                 };
             }
             return null;
@@ -174,6 +172,26 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
                 return ret;
             }
             return null;
+        },
+        async doRename(document, position, newName) {
+            const jsDocument = jsDocuments.get(document);
+            const jsLanguageService = await host.getLanguageService(jsDocument);
+            const jsDocumentPosition = jsDocument.offsetAt(position);
+            const { canRename } = jsLanguageService.getRenameInfo(jsDocument.uri, jsDocumentPosition);
+            if (!canRename) {
+                return null;
+            }
+            const renameInfos = jsLanguageService.findRenameLocations(jsDocument.uri, jsDocumentPosition, false, false);
+            const edits = [];
+            renameInfos === null || renameInfos === void 0 ? void 0 : renameInfos.map(renameInfo => {
+                edits.push({
+                    range: convertRange(jsDocument, renameInfo.textSpan),
+                    newText: newName,
+                });
+            });
+            return {
+                changes: { [document.uri]: edits },
+            };
         },
         async findDocumentHighlight(document, position) {
             const jsDocument = jsDocuments.get(document);

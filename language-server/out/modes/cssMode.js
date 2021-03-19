@@ -20,13 +20,15 @@ function getCSSMode(cssLanguageService, documentRegions, workspace) {
             return cssLanguageService.doValidation(embedded, cssStylesheets.get(embedded), settings && settings.css);
         },
         async doComplete(document, position, documentContext, _settings = workspace.settings) {
+            var _a;
             let embedded = embeddedCSSDocuments.get(document);
             const stylesheet = cssStylesheets.get(embedded);
-            return cssLanguageService.doComplete2(embedded, position, stylesheet, documentContext) || languageModes_1.CompletionList.create();
+            return cssLanguageService.doComplete2(embedded, position, stylesheet, documentContext, (_a = _settings === null || _settings === void 0 ? void 0 : _settings.css) === null || _a === void 0 ? void 0 : _a.completion) || languageModes_1.CompletionList.create();
         },
-        async doHover(document, position) {
+        async doHover(document, position, settings = workspace.settings) {
+            var _a;
             let embedded = embeddedCSSDocuments.get(document);
-            return cssLanguageService.doHover(embedded, position, cssStylesheets.get(embedded));
+            return cssLanguageService.doHover(embedded, position, cssStylesheets.get(embedded), (_a = settings === null || settings === void 0 ? void 0 : settings.css) === null || _a === void 0 ? void 0 : _a.hover);
         },
         async findDocumentHighlight(document, position) {
             let embedded = embeddedCSSDocuments.get(document);
