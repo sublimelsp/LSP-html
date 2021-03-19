@@ -6,7 +6,7 @@ GITHUB_REPO_NAME=$(echo "${GITHUB_REPO_URL}" | command grep -oE '[^/]*$')
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPO_DIR="${SCRIPT_DIR}"
 SRC_DIR="${REPO_DIR}/${GITHUB_REPO_NAME}/extensions/html-language-features/server"
-DIST_DIR="${REPO_DIR}"
+DIST_DIR="${REPO_DIR}/extensions/html-language-features"
 
 
 # -------- #
@@ -16,8 +16,7 @@ DIST_DIR="${REPO_DIR}"
 pushd "${REPO_DIR}" || exit
 
 rm -rf \
-    "${DIST_DIR:?}/lib" \
-    "${DIST_DIR:?}/out" \
+    "extensions/" \
     "package.json" "package-lock.json"
 
 popd || exit
@@ -93,6 +92,8 @@ popd || exit
 # -------------------- #
 
 pushd "${REPO_DIR}" || exit
+
+mkdir -p "${DIST_DIR}"
 
 mv "${SRC_DIR}/lib" "${DIST_DIR}"
 mv "${SRC_DIR}/out" "${DIST_DIR}"
