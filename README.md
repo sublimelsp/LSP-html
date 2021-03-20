@@ -1,6 +1,6 @@
 # LSP-html
 
-HTML support for Sublime's LSP plugin provided through [vscode-html-languageserver](https://github.com/vscode-langservers/vscode-html-languageserver).
+HTML support for Sublime's LSP plugin provided through VSCode's [html-language-features](https://github.com/microsoft/vscode/tree/main/extensions/html-language-features/server) extension.
 
 ### Installation
 
