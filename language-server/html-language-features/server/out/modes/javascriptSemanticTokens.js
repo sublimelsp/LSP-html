@@ -106,7 +106,7 @@ tokenTypes[6 /* parameter */] = 'parameter';
 tokenTypes[7 /* variable */] = 'variable';
 tokenTypes[8 /* property */] = 'property';
 tokenTypes[9 /* function */] = 'function';
-tokenTypes[10 /* member */] = 'member';
+tokenTypes[10 /* method */] = 'method';
 const tokenModifiers = [];
 tokenModifiers[2 /* async */] = 'async';
 tokenModifiers[0 /* declaration */] = 'declaration';
@@ -120,9 +120,9 @@ const tokenFromDeclarationMapping = {
     [ts.SyntaxKind.EnumDeclaration]: 1 /* enum */,
     [ts.SyntaxKind.EnumMember]: 8 /* property */,
     [ts.SyntaxKind.ClassDeclaration]: 0 /* class */,
-    [ts.SyntaxKind.MethodDeclaration]: 10 /* member */,
+    [ts.SyntaxKind.MethodDeclaration]: 10 /* method */,
     [ts.SyntaxKind.FunctionDeclaration]: 9 /* function */,
-    [ts.SyntaxKind.MethodSignature]: 10 /* member */,
+    [ts.SyntaxKind.MethodSignature]: 10 /* method */,
     [ts.SyntaxKind.GetAccessor]: 8 /* property */,
     [ts.SyntaxKind.PropertySignature]: 8 /* property */,
     [ts.SyntaxKind.InterfaceDeclaration]: 2 /* interface */,

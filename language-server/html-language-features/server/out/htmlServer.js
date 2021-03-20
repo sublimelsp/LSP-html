@@ -25,17 +25,13 @@ var TagCloseRequest;
 (function (TagCloseRequest) {
     TagCloseRequest.type = new vscode_languageserver_1.RequestType('html/tag');
 })(TagCloseRequest || (TagCloseRequest = {}));
-var OnTypeRenameRequest;
-(function (OnTypeRenameRequest) {
-    OnTypeRenameRequest.type = new vscode_languageserver_1.RequestType('html/onTypeRename');
-})(OnTypeRenameRequest || (OnTypeRenameRequest = {}));
 var SemanticTokenRequest;
 (function (SemanticTokenRequest) {
     SemanticTokenRequest.type = new vscode_languageserver_1.RequestType('html/semanticTokens');
 })(SemanticTokenRequest || (SemanticTokenRequest = {}));
 var SemanticTokenLegendRequest;
 (function (SemanticTokenLegendRequest) {
-    SemanticTokenLegendRequest.type = new vscode_languageserver_1.RequestType('html/semanticTokenLegend');
+    SemanticTokenLegendRequest.type = new vscode_languageserver_1.RequestType0('html/semanticTokenLegend');
 })(SemanticTokenLegendRequest || (SemanticTokenLegendRequest = {}));
 function startServer(connection, runtime) {
     // Create a text document manager.
@@ -128,7 +124,8 @@ function startServer(connection, runtime) {
             colorProvider: {},
             foldingRangeProvider: true,
             selectionRangeProvider: true,
-            renameProvider: true
+            renameProvider: true,
+            linkedEditingRangeProvider: true
         };
         return { capabilities };
     });
@@ -269,8 +266,10 @@ function startServer(connection, runtime) {
             const document = documents.get(textDocumentPosition.textDocument.uri);
             if (document) {
                 const mode = languageModes.getModeAtPosition(document, textDocumentPosition.position);
-                if (mode && mode.doHover) {
-                    return mode.doHover(document, textDocumentPosition.position);
+                const doHover = mode === null || mode === void 0 ? void 0 : mode.doHover;
+                if (doHover) {
+                    const settings = await getDocumentSettings(document, () => doHover.length > 2);
+                    return doHover(document, textDocumentPosition.position, settings);
                 }
             }
             return null;
@@ -432,23 +431,26 @@ function startServer(connection, runtime) {
             const document = documents.get(params.textDocument.uri);
             const position = params.position;
             if (document) {
-                const htmlMode = languageModes.getMode('html');
-                if (htmlMode && htmlMode.doRename) {
-                    return htmlMode.doRename(document, position, params.newName);
+                const mode = languageModes.getModeAtPosition(document, params.position);
+                if (mode && mode.doRename) {
+                    return mode.doRename(document, position, params.newName);
                 }
             }
             return null;
         }, null, `Error while computing rename for ${params.textDocument.uri}`, token);
     });
-    connection.onRequest(OnTypeRenameRequest.type, (params, token) => {
+    connection.languages.onLinkedEditingRange((params, token) => {
         return runner_1.runSafe(async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 const pos = params.position;
                 if (pos.character > 0) {
                     const mode = languageModes.getModeAtPosition(document, languageModes_1.Position.create(pos.line, pos.character - 1));
-                    if (mode && mode.doOnTypeRename) {
-                        return mode.doOnTypeRename(document, pos);
+                    if (mode && mode.doLinkedEditing) {
+                        const ranges = await mode.doLinkedEditing(document, pos);
+                        if (ranges) {
+                            return { ranges };
+                        }
                     }
                 }
             }
@@ -471,7 +473,7 @@ function startServer(connection, runtime) {
             return null;
         }, null, `Error while computing semantic tokens for ${params.textDocument.uri}`, token);
     });
-    connection.onRequest(SemanticTokenLegendRequest.type, (_params, token) => {
+    connection.onRequest(SemanticTokenLegendRequest.type, token => {
         return runner_1.runSafe(async () => {
             return getSemanticTokenProvider().legend;
         }, null, `Error while computing semantic tokens legend`, token);

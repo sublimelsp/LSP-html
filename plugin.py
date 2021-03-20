@@ -12,5 +12,12 @@ def plugin_unloaded():
 
 class LspHtmlPlugin(NpmClientHandler):
     package_name = __package__
-    server_directory = 'language-server'
-    server_binary_path = os.path.join(server_directory, 'out', 'node', 'htmlServerMain.js')
+    server_directory = "language-server"
+    server_binary_path = os.path.join(
+        server_directory,
+        "html-language-features",
+        "server",
+        "out",
+        "node",
+        "htmlServerMain.js",
+    )
