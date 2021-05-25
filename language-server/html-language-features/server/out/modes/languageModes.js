@@ -3,18 +3,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLanguageModes = void 0;
+exports.getLanguageModes = exports.TextDocument = exports.TokenType = exports.ClientCapabilities = exports.TextDocumentIdentifier = exports.SelectionRange = exports.DiagnosticSeverity = exports.ParameterInformation = exports.SignatureInformation = exports.WorkspaceEdit = exports.ColorPresentation = exports.ColorInformation = exports.Color = exports.TextEdit = exports.SymbolKind = exports.SymbolInformation = exports.Range = exports.Position = exports.Location = exports.Hover = exports.FormattingOptions = exports.FoldingRangeKind = exports.FoldingRange = exports.DocumentLink = exports.DocumentHighlightKind = exports.DocumentHighlight = exports.Diagnostic = exports.CompletionItemKind = exports.CompletionList = exports.CompletionItem = void 0;
 const vscode_css_languageservice_1 = require("vscode-css-languageservice");
 const vscode_html_languageservice_1 = require("vscode-html-languageservice");
 const languageModelCache_1 = require("../languageModelCache");
@@ -22,7 +12,38 @@ const cssMode_1 = require("./cssMode");
 const embeddedSupport_1 = require("./embeddedSupport");
 const htmlMode_1 = require("./htmlMode");
 const javascriptMode_1 = require("./javascriptMode");
-__exportStar(require("vscode-html-languageservice"), exports);
+var vscode_languageserver_1 = require("vscode-languageserver");
+Object.defineProperty(exports, "CompletionItem", { enumerable: true, get: function () { return vscode_languageserver_1.CompletionItem; } });
+Object.defineProperty(exports, "CompletionList", { enumerable: true, get: function () { return vscode_languageserver_1.CompletionList; } });
+Object.defineProperty(exports, "CompletionItemKind", { enumerable: true, get: function () { return vscode_languageserver_1.CompletionItemKind; } });
+Object.defineProperty(exports, "Diagnostic", { enumerable: true, get: function () { return vscode_languageserver_1.Diagnostic; } });
+Object.defineProperty(exports, "DocumentHighlight", { enumerable: true, get: function () { return vscode_languageserver_1.DocumentHighlight; } });
+Object.defineProperty(exports, "DocumentHighlightKind", { enumerable: true, get: function () { return vscode_languageserver_1.DocumentHighlightKind; } });
+Object.defineProperty(exports, "DocumentLink", { enumerable: true, get: function () { return vscode_languageserver_1.DocumentLink; } });
+Object.defineProperty(exports, "FoldingRange", { enumerable: true, get: function () { return vscode_languageserver_1.FoldingRange; } });
+Object.defineProperty(exports, "FoldingRangeKind", { enumerable: true, get: function () { return vscode_languageserver_1.FoldingRangeKind; } });
+Object.defineProperty(exports, "FormattingOptions", { enumerable: true, get: function () { return vscode_languageserver_1.FormattingOptions; } });
+Object.defineProperty(exports, "Hover", { enumerable: true, get: function () { return vscode_languageserver_1.Hover; } });
+Object.defineProperty(exports, "Location", { enumerable: true, get: function () { return vscode_languageserver_1.Location; } });
+Object.defineProperty(exports, "Position", { enumerable: true, get: function () { return vscode_languageserver_1.Position; } });
+Object.defineProperty(exports, "Range", { enumerable: true, get: function () { return vscode_languageserver_1.Range; } });
+Object.defineProperty(exports, "SymbolInformation", { enumerable: true, get: function () { return vscode_languageserver_1.SymbolInformation; } });
+Object.defineProperty(exports, "SymbolKind", { enumerable: true, get: function () { return vscode_languageserver_1.SymbolKind; } });
+Object.defineProperty(exports, "TextEdit", { enumerable: true, get: function () { return vscode_languageserver_1.TextEdit; } });
+Object.defineProperty(exports, "Color", { enumerable: true, get: function () { return vscode_languageserver_1.Color; } });
+Object.defineProperty(exports, "ColorInformation", { enumerable: true, get: function () { return vscode_languageserver_1.ColorInformation; } });
+Object.defineProperty(exports, "ColorPresentation", { enumerable: true, get: function () { return vscode_languageserver_1.ColorPresentation; } });
+Object.defineProperty(exports, "WorkspaceEdit", { enumerable: true, get: function () { return vscode_languageserver_1.WorkspaceEdit; } });
+Object.defineProperty(exports, "SignatureInformation", { enumerable: true, get: function () { return vscode_languageserver_1.SignatureInformation; } });
+Object.defineProperty(exports, "ParameterInformation", { enumerable: true, get: function () { return vscode_languageserver_1.ParameterInformation; } });
+Object.defineProperty(exports, "DiagnosticSeverity", { enumerable: true, get: function () { return vscode_languageserver_1.DiagnosticSeverity; } });
+Object.defineProperty(exports, "SelectionRange", { enumerable: true, get: function () { return vscode_languageserver_1.SelectionRange; } });
+Object.defineProperty(exports, "TextDocumentIdentifier", { enumerable: true, get: function () { return vscode_languageserver_1.TextDocumentIdentifier; } });
+var vscode_html_languageservice_2 = require("vscode-html-languageservice");
+Object.defineProperty(exports, "ClientCapabilities", { enumerable: true, get: function () { return vscode_html_languageservice_2.ClientCapabilities; } });
+Object.defineProperty(exports, "TokenType", { enumerable: true, get: function () { return vscode_html_languageservice_2.TokenType; } });
+var vscode_languageserver_textdocument_1 = require("vscode-languageserver-textdocument");
+Object.defineProperty(exports, "TextDocument", { enumerable: true, get: function () { return vscode_languageserver_textdocument_1.TextDocument; } });
 function getLanguageModes(supportedLanguages, workspace, clientCapabilities, requestService) {
     const htmlLanguageService = vscode_html_languageservice_1.getLanguageService({ clientCapabilities, fileSystemProvider: requestService });
     const cssLanguageService = vscode_css_languageservice_1.getCSSLanguageService({ clientCapabilities, fileSystemProvider: requestService });
