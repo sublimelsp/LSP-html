@@ -70,6 +70,7 @@ function startServer(connection, runtime) {
     // After the server has started the client sends an initialize request. The server receives
     // in the passed params the rootPath of the workspace plus the client capabilities
     connection.onInitialize((params) => {
+        var _a, _b;
         const initializationOptions = params.initializationOptions;
         workspaceFolders = params.workspaceFolders;
         if (!Array.isArray(workspaceFolders)) {
@@ -115,7 +116,8 @@ function startServer(connection, runtime) {
             completionProvider: clientSnippetSupport ? { resolveProvider: true, triggerCharacters: ['.', ':', '<', '"', '=', '/'] } : undefined,
             hoverProvider: true,
             documentHighlightProvider: true,
-            documentRangeFormattingProvider: (initializationOptions === null || initializationOptions === void 0 ? void 0 : initializationOptions.provideFormatter) === true,
+            documentRangeFormattingProvider: ((_a = params.initializationOptions) === null || _a === void 0 ? void 0 : _a.provideFormatter) === true,
+            documentFormattingProvider: ((_b = params.initializationOptions) === null || _b === void 0 ? void 0 : _b.provideFormatter) === true,
             documentLinkProvider: { resolveProvider: false },
             documentSymbolProvider: true,
             definitionProvider: true,
@@ -148,7 +150,7 @@ function startServer(connection, runtime) {
             });
         }
     });
-    let formatterRegistration = null;
+    let formatterRegistrations = null;
     // The settings have changed. Is send on server activation as well.
     connection.onDidChangeConfiguration((change) => {
         globalSettings = change.settings;
@@ -158,14 +160,17 @@ function startServer(connection, runtime) {
         if (dynamicFormatterRegistration) {
             const enableFormatter = globalSettings && globalSettings.html && globalSettings.html.format && globalSettings.html.format.enable;
             if (enableFormatter) {
-                if (!formatterRegistration) {
+                if (!formatterRegistrations) {
                     const documentSelector = [{ language: 'html' }, { language: 'handlebars' }];
-                    formatterRegistration = connection.client.register(vscode_languageserver_1.DocumentRangeFormattingRequest.type, { documentSelector });
+                    formatterRegistrations = [
+                        connection.client.register(vscode_languageserver_1.DocumentRangeFormattingRequest.type, { documentSelector }),
+                        connection.client.register(vscode_languageserver_1.DocumentFormattingRequest.type, { documentSelector })
+                    ];
                 }
             }
-            else if (formatterRegistration) {
-                formatterRegistration.then(r => r.dispose());
-                formatterRegistration = null;
+            else if (formatterRegistrations) {
+                formatterRegistrations.forEach(p => p.then(r => r.dispose()));
+                formatterRegistrations = null;
             }
         }
     });
@@ -323,20 +328,24 @@ function startServer(connection, runtime) {
             return null;
         }, null, `Error while computing signature help for ${signatureHelpParms.textDocument.uri}`, token);
     });
-    connection.onDocumentRangeFormatting(async (formatParams, token) => {
-        return runner_1.runSafe(async () => {
-            const document = documents.get(formatParams.textDocument.uri);
-            if (document) {
-                let settings = await getDocumentSettings(document, () => true);
-                if (!settings) {
-                    settings = globalSettings;
-                }
-                const unformattedTags = settings && settings.html && settings.html.format && settings.html.format.unformatted || '';
-                const enabledModes = { css: !unformattedTags.match(/\bstyle\b/), javascript: !unformattedTags.match(/\bscript\b/) };
-                return formatting_1.format(languageModes, document, formatParams.range, formatParams.options, settings, enabledModes);
+    async function onFormat(textDocument, range, options) {
+        const document = documents.get(textDocument.uri);
+        if (document) {
+            let settings = await getDocumentSettings(document, () => true);
+            if (!settings) {
+                settings = globalSettings;
             }
-            return [];
-        }, [], `Error while formatting range for ${formatParams.textDocument.uri}`, token);
+            const unformattedTags = settings && settings.html && settings.html.format && settings.html.format.unformatted || '';
+            const enabledModes = { css: !unformattedTags.match(/\bstyle\b/), javascript: !unformattedTags.match(/\bscript\b/) };
+            return formatting_1.format(languageModes, document, range !== null && range !== void 0 ? range : getFullRange(document), options, settings, enabledModes);
+        }
+        return [];
+    }
+    connection.onDocumentRangeFormatting((formatParams, token) => {
+        return runner_1.runSafe(() => onFormat(formatParams.textDocument, formatParams.range, formatParams.options), [], `Error while formatting range for ${formatParams.textDocument.uri}`, token);
+    });
+    connection.onDocumentFormatting((formatParams, token) => {
+        return runner_1.runSafe(() => onFormat(formatParams.textDocument, undefined, formatParams.options), [], `Error while formatting ${formatParams.textDocument.uri}`, token);
     });
     connection.onDocumentLinks((documentLinkParam, token) => {
         return runner_1.runSafe(async () => {
@@ -487,3 +496,6 @@ function startServer(connection, runtime) {
     connection.listen();
 }
 exports.startServer = startServer;
+function getFullRange(document) {
+    return languageModes_1.Range.create(languageModes_1.Position.create(0, 0), document.positionAt(document.getText().length));
+}

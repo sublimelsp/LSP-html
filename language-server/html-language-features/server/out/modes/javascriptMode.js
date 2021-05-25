@@ -116,7 +116,7 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
         async doResolve(document, item) {
             const jsDocument = jsDocuments.get(document);
             const jsLanguageService = await host.getLanguageService(jsDocument);
-            let details = jsLanguageService.getCompletionEntryDetails(jsDocument.uri, item.data.offset, item.label, undefined, undefined, undefined);
+            let details = jsLanguageService.getCompletionEntryDetails(jsDocument.uri, item.data.offset, item.label, undefined, undefined, undefined, undefined);
             if (details) {
                 item.detail = ts.displayPartsToString(details.displayParts);
                 item.documentation = ts.displayPartsToString(details.documentation);
