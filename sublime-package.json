@@ -7,84 +7,104 @@
         ],
         "schema": {
           "$id": "sublime://settings/LSP-html",
+          "allOf": [
+            {
+              "$ref": "sublime://settings/LSP-plugin-base"
+            },
+            {
+              "$ref": "sublime://settings/LSP-html#/definitions/PluginConfig"
+            }
+          ],
           "definitions": {
             "PluginConfig": {
               "properties": {
                 "settings": {
+                  // Dissabling this because this server also accepts settings from LSP-css.
+                  // "additionalProperties": false,
                   "properties": {
+                    "html.autoClosingTags": {
+                      "default": true,
+                      "description": "Enable/disable autoclosing of HTML tags.",
+                      "type": "boolean"
+                    },
                     "html.customData": {
-                      "type": "array",
-                      "markdownDescription": "A list of relative file paths pointing to JSON files following the [custom data format](https://github.com/microsoft/vscode-html-languageservice/blob/master/docs/customData.md).\n\nLSP-json loads custom data on startup to enhance its HTML support for the custom HTML tags, attributes and attribute values you specify in the JSON files.\n\nThe file paths are relative to workspace and only workspace folder settings are considered.",
                       "default": [],
                       "items": {
                         "type": "string"
                       },
-                    },
-                    "html.format.enable": {
-                      "type": "boolean",
-                      "default": true,
-                      "description": "Enable/disable default HTML formatter."
-                    },
-                    "html.format.wrapLineLength": {
-                      "type": "integer",
-                      "default": 120,
-                      "description": "Maximum amount of characters per line (0 = disable)."
-                    },
-                    "html.format.unformatted": {
-                      "type": [
-                        "string",
-                        "null"
-                      ],
-                      "default": "wbr",
-                      "markdownDescription": "List of tags, comma separated, that shouldn't be reformatted. `null` defaults to all tags listed at https://www.w3.org/TR/html5/dom.html#phrasing-content."
+                      "markdownDescription": "A list of relative file paths pointing to JSON files following the [custom data format](https://github.com/microsoft/vscode-html-languageservice/blob/master/docs/customData.md).\n\nVS Code loads custom data on startup to enhance its HTML support for the custom HTML tags, attributes and attribute values you specify in the JSON files.\n\nThe file paths are relative to workspace and only workspace folder settings are considered.",
+                      "type": "array"
                     },
                     "html.format.contentUnformatted": {
+                      "default": "pre,code,textarea",
+                      "markdownDescription": "List of tags, comma separated, where the content shouldn't be reformatted. `null` defaults to the `pre` tag.",
                       "type": [
                         "string",
                         "null"
-                      ],
-                      "default": "pre,code,textarea",
-                      "markdownDescription": "List of tags, comma separated, where the content shouldn't be reformatted. `null` defaults to the `pre` tag."
+                      ]
+                    },
+                    "html.format.enable": {
+                      "default": true,
+                      "description": "Enable/disable default HTML formatter.",
+                      "type": "boolean"
+                    },
+                    "html.format.endWithNewline": {
+                      "default": false,
+                      "description": "End with a newline.",
+                      "type": "boolean"
+                    },
+                    "html.format.extraLiners": {
+                      "default": "head, body, /html",
+                      "markdownDescription": "List of tags, comma separated, that should have an extra newline before them. `null` defaults to `\"head, body, /html\"`.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "html.format.indentHandlebars": {
+                      "default": false,
+                      "markdownDescription": "Format and indent `{{#foo}}` and `{{/foo}}`.",
+                      "type": "boolean"
                     },
                     "html.format.indentInnerHtml": {
-                      "type": "boolean",
                       "default": false,
-                      "markdownDescription": "Indent `<head>` and `<body>` sections."
-                    },
-                    "html.format.preserveNewLines": {
-                      "type": "boolean",
-                      "default": true,
-                      "description": "Controls whether existing line breaks before elements should be preserved. Only works before elements, not inside tags or for text."
+                      "markdownDescription": "Indent `<head>` and `<body>` sections.",
+                      "type": "boolean"
                     },
                     "html.format.maxPreserveNewLines": {
+                      "default": null,
+                      "markdownDescription": "Maximum number of line breaks to be preserved in one chunk. Use `null` for unlimited.",
                       "type": [
                         "number",
                         "null"
-                      ],
-                      "default": null,
-                      "markdownDescription": "Maximum number of line breaks to be preserved in one chunk. Use `null` for unlimited."
+                      ]
                     },
-                    "html.format.indentHandlebars": {
-                      "type": "boolean",
+                    "html.format.preserveNewLines": {
+                      "default": true,
+                      "description": "Controls whether existing line breaks before elements should be preserved. Only works before elements, not inside tags or for text.",
+                      "type": "boolean"
+                    },
+                    "html.format.templating": {
                       "default": false,
-                      "markdownDescription": "Format and indent `{{#foo}}` and `{{/foo}}`."
+                      "description": "Honor django, erb, handlebars and php templating language tags.",
+                      "type": "boolean"
                     },
-                    "html.format.endWithNewline": {
-                      "type": "boolean",
-                      "default": false,
-                      "description": "End with a newline."
-                    },
-                    "html.format.extraLiners": {
+                    "html.format.unformatted": {
+                      "default": "wbr",
+                      "markdownDescription": "List of tags, comma separated, that shouldn't be reformatted. `null` defaults to all tags listed at https://www.w3.org/TR/html5/dom.html#phrasing-content.",
                       "type": [
                         "string",
                         "null"
-                      ],
-                      "default": "head, body, /html",
-                      "markdownDescription": "List of tags, comma separated, that should have an extra newline before them. `null` defaults to `\"head, body, /html\"`."
+                      ]
+                    },
+                    "html.format.unformattedContentDelimiter": {
+                      "default": "",
+                      "markdownDescription": "Keep text content together between this string.",
+                      "type": "string"
                     },
                     "html.format.wrapAttributes": {
-                      "type": "string",
                       "default": "auto",
+                      "description": "Wrap attributes.",
                       "enum": [
                         "auto",
                         "force",
@@ -100,49 +120,60 @@
                         "Wrap each attribute except first and keep aligned.",
                         "Wrap each attribute.",
                         "Wrap when line length is exceeded, align attributes vertically.",
-                        "Preserve wrapping of attributes",
-                        "Preserve wrapping of attributes but align.",
+                        "Preserve wrapping of attributes.",
+                        "Preserve wrapping of attributes but align."
                       ],
-                      "description": "Wrap attributes."
+                      "type": "string"
+                    },
+                    "html.format.wrapAttributesIndentSize": {
+                      "default": null,
+                      "description": "Alignment size when using 'force aligned' and 'aligned multiple' in `#html.format.wrapAttributes#` or `null` to use the default indent size.",
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "html.format.wrapLineLength": {
+                      "default": 120,
+                      "description": "Maximum amount of characters per line (0 = disable).",
+                      "type": "integer"
+                    },
+                    "html.hover.documentation": {
+                      "default": true,
+                      "description": "Show tag and attribute documentation in hover.",
+                      "type": "boolean"
+                    },
+                    "html.hover.references": {
+                      "default": true,
+                      "description": "Show references to MDN in hover.",
+                      "type": "boolean"
+                    },
+                    "html.mirrorCursorOnMatchingTag": {
+                      "default": false,
+                      "deprecationMessage": "Deprecated in favor of `editor.linkedEditing`",
+                      "description": "Enable/disable mirroring cursor on matching HTML tag.",
+                      "type": "boolean"
                     },
                     "html.suggest.html5": {
-                      "type": "boolean",
                       "default": true,
-                      "description": "Controls whether the built-in HTML language support suggests HTML5 tags, properties and values."
+                      "description": "Controls whether the built-in HTML language support suggests HTML5 tags, properties and values.",
+                      "type": "boolean"
                     },
                     "html.validate.scripts": {
-                      "type": "boolean",
                       "default": true,
-                      "description": "Controls whether the built-in HTML language support validates embedded scripts."
+                      "description": "Controls whether the built-in HTML language support validates embedded scripts.",
+                      "type": "boolean"
                     },
                     "html.validate.styles": {
-                      "type": "boolean",
                       "default": true,
-                      "description": "Controls whether the built-in HTML language support validates embedded styles."
-                    },
-                    "html.trace.server": {
-                      "type": "string",
-                      "enum": [
-                        "off",
-                        "messages",
-                        "verbose"
-                      ],
-                      "default": "off",
-                      "description": "Traces the communication between ST and the HTML language server."
+                      "description": "Controls whether the built-in HTML language support validates embedded styles.",
+                      "type": "boolean"
                     }
                   }
                 }
               }
             }
-          },
-          "allOf": [
-            {
-              "$ref": "sublime://settings/LSP-plugin-base"
-            },
-            {
-              "$ref": "sublime://settings/LSP-html#/definitions/PluginConfig"
-            }
-          ]
+          }
         }
       },
       {
@@ -164,7 +195,7 @@
             }
           }
         }
-      },
+      }
     ]
   }
 }
