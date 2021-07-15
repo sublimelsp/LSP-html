@@ -189,13 +189,13 @@ function startServer(connection, runtime) {
     function cleanPendingValidation(textDocument) {
         const request = pendingValidationRequests[textDocument.uri];
         if (request) {
-            clearTimeout(request);
+            request.dispose();
             delete pendingValidationRequests[textDocument.uri];
         }
     }
     function triggerValidation(textDocument) {
         cleanPendingValidation(textDocument);
-        pendingValidationRequests[textDocument.uri] = setTimeout(() => {
+        pendingValidationRequests[textDocument.uri] = runtime.timer.setTimeout(() => {
             delete pendingValidationRequests[textDocument.uri];
             validateTextDocument(textDocument);
         }, validationDelayMs);
@@ -230,7 +230,7 @@ function startServer(connection, runtime) {
         }
     }
     connection.onCompletion(async (textDocumentPosition, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const document = documents.get(textDocumentPosition.textDocument.uri);
             if (!document) {
                 return null;
@@ -254,7 +254,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing completions for ${textDocumentPosition.textDocument.uri}`, token);
     });
     connection.onCompletionResolve((item, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const data = item.data;
             if (data && data.languageId && data.uri) {
                 const mode = languageModes.getMode(data.languageId);
@@ -267,7 +267,7 @@ function startServer(connection, runtime) {
         }, item, `Error while resolving completion proposal`, token);
     });
     connection.onHover((textDocumentPosition, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const document = documents.get(textDocumentPosition.textDocument.uri);
             if (document) {
                 const mode = languageModes.getModeAtPosition(document, textDocumentPosition.position);
@@ -281,7 +281,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing hover for ${textDocumentPosition.textDocument.uri}`, token);
     });
     connection.onDocumentHighlight((documentHighlightParams, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const document = documents.get(documentHighlightParams.textDocument.uri);
             if (document) {
                 const mode = languageModes.getModeAtPosition(document, documentHighlightParams.position);
@@ -293,7 +293,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing document highlights for ${documentHighlightParams.textDocument.uri}`, token);
     });
     connection.onDefinition((definitionParams, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const document = documents.get(definitionParams.textDocument.uri);
             if (document) {
                 const mode = languageModes.getModeAtPosition(document, definitionParams.position);
@@ -305,7 +305,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing definitions for ${definitionParams.textDocument.uri}`, token);
     });
     connection.onReferences((referenceParams, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const document = documents.get(referenceParams.textDocument.uri);
             if (document) {
                 const mode = languageModes.getModeAtPosition(document, referenceParams.position);
@@ -317,7 +317,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing references for ${referenceParams.textDocument.uri}`, token);
     });
     connection.onSignatureHelp((signatureHelpParms, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const document = documents.get(signatureHelpParms.textDocument.uri);
             if (document) {
                 const mode = languageModes.getModeAtPosition(document, signatureHelpParms.position);
@@ -342,13 +342,13 @@ function startServer(connection, runtime) {
         return [];
     }
     connection.onDocumentRangeFormatting((formatParams, token) => {
-        return runner_1.runSafe(() => onFormat(formatParams.textDocument, formatParams.range, formatParams.options), [], `Error while formatting range for ${formatParams.textDocument.uri}`, token);
+        return runner_1.runSafe(runtime, () => onFormat(formatParams.textDocument, formatParams.range, formatParams.options), [], `Error while formatting range for ${formatParams.textDocument.uri}`, token);
     });
     connection.onDocumentFormatting((formatParams, token) => {
-        return runner_1.runSafe(() => onFormat(formatParams.textDocument, undefined, formatParams.options), [], `Error while formatting ${formatParams.textDocument.uri}`, token);
+        return runner_1.runSafe(runtime, () => onFormat(formatParams.textDocument, undefined, formatParams.options), [], `Error while formatting ${formatParams.textDocument.uri}`, token);
     });
     connection.onDocumentLinks((documentLinkParam, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const document = documents.get(documentLinkParam.textDocument.uri);
             const links = [];
             if (document) {
@@ -363,7 +363,7 @@ function startServer(connection, runtime) {
         }, [], `Error while document links for ${documentLinkParam.textDocument.uri}`, token);
     });
     connection.onDocumentSymbol((documentSymbolParms, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const document = documents.get(documentSymbolParms.textDocument.uri);
             const symbols = [];
             if (document) {
@@ -377,7 +377,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing document symbols for ${documentSymbolParms.textDocument.uri}`, token);
     });
     connection.onRequest(vscode_languageserver_1.DocumentColorRequest.type, (params, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const infos = [];
             const document = documents.get(params.textDocument.uri);
             if (document) {
@@ -391,7 +391,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing document colors for ${params.textDocument.uri}`, token);
     });
     connection.onRequest(vscode_languageserver_1.ColorPresentationRequest.type, (params, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 const mode = languageModes.getModeAtPosition(document, params.range.start);
@@ -403,7 +403,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing color presentations for ${params.textDocument.uri}`, token);
     });
     connection.onRequest(TagCloseRequest.type, (params, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 const pos = params.position;
@@ -418,7 +418,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing tag close actions for ${params.textDocument.uri}`, token);
     });
     connection.onFoldingRanges((params, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 return htmlFolding_1.getFoldingRanges(languageModes, document, foldingRangeLimit, token);
@@ -427,7 +427,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing folding regions for ${params.textDocument.uri}`, token);
     });
     connection.onSelectionRanges((params, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 return selectionRanges_1.getSelectionRanges(languageModes, document, params.positions);
@@ -436,7 +436,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing selection ranges for ${params.textDocument.uri}`, token);
     });
     connection.onRenameRequest((params, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             const position = params.position;
             if (document) {
@@ -449,7 +449,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing rename for ${params.textDocument.uri}`, token);
     });
     connection.languages.onLinkedEditingRange((params, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 const pos = params.position;
@@ -474,7 +474,7 @@ function startServer(connection, runtime) {
         return semanticTokensProvider;
     }
     connection.onRequest(SemanticTokenRequest.type, (params, token) => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 return getSemanticTokenProvider().getSemanticTokens(document, params.ranges);
@@ -483,7 +483,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing semantic tokens for ${params.textDocument.uri}`, token);
     });
     connection.onRequest(SemanticTokenLegendRequest.type, token => {
-        return runner_1.runSafe(async () => {
+        return runner_1.runSafe(runtime, async () => {
             return getSemanticTokenProvider().legend;
         }, null, `Error while computing semantic tokens legend`, token);
     });

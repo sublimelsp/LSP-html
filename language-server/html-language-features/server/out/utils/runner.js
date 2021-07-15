@@ -20,9 +20,9 @@ function formatError(message, err) {
     return message;
 }
 exports.formatError = formatError;
-function runSafe(func, errorVal, errorMessage, token) {
+function runSafe(runtime, func, errorVal, errorMessage, token) {
     return new Promise((resolve) => {
-        setImmediate(() => {
+        runtime.timer.setImmediate(() => {
             if (token.isCancellationRequested) {
                 resolve(cancelValue());
             }
