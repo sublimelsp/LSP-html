@@ -9,9 +9,9 @@
   },
   "main": "./out/node/htmlServerMain",
   "dependencies": {
-    "typescript": "^4.3.5",
+    "typescript": "^4.4.1-rc",
     "vscode-css-languageservice": "^5.1.4",
-    "vscode-html-languageservice": "^4.0.6",
+    "vscode-html-languageservice": "^4.0.7",
     "vscode-languageserver": "^7.0.0",
     "vscode-languageserver-textdocument": "^1.0.1",
     "vscode-nls": "^5.0.0",

@@ -94,10 +94,10 @@ function encodeTokens(tokens, ranges, document) {
     for (let k = 0; k < resultTokens.length && currRange; k++) {
         const curr = resultTokens[k];
         const start = curr.start;
-        while (currRange && positions_1.beforeOrSame(currRange.end, start)) {
+        while (currRange && (0, positions_1.beforeOrSame)(currRange.end, start)) {
             currRange = ranges[rangeIndex++];
         }
-        if (currRange && positions_1.beforeOrSame(currRange.start, start) && positions_1.beforeOrSame({ line: start.line, character: start.character + curr.length }, currRange.end)) {
+        if (currRange && (0, positions_1.beforeOrSame)(currRange.start, start) && (0, positions_1.beforeOrSame)({ line: start.line, character: start.character + curr.length }, currRange.end)) {
             // token inside a range
             if (prefLine !== start.line) {
                 prevChar = 0;

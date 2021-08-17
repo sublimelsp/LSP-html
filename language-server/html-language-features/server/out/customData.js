@@ -13,7 +13,7 @@ function fetchHTMLDataProviders(dataPaths, requestService) {
             return parseHTMLData(p, content);
         }
         catch (e) {
-            return vscode_html_languageservice_1.newHTMLDataProvider(p, { version: 1 });
+            return (0, vscode_html_languageservice_1.newHTMLDataProvider)(p, { version: 1 });
         }
     });
     return Promise.all(providers);
@@ -25,9 +25,9 @@ function parseHTMLData(id, source) {
         rawData = JSON.parse(source);
     }
     catch (err) {
-        return vscode_html_languageservice_1.newHTMLDataProvider(id, { version: 1 });
+        return (0, vscode_html_languageservice_1.newHTMLDataProvider)(id, { version: 1 });
     }
-    return vscode_html_languageservice_1.newHTMLDataProvider(id, {
+    return (0, vscode_html_languageservice_1.newHTMLDataProvider)(id, {
         version: rawData.version || 1,
         tags: rawData.tags || [],
         globalAttributes: rawData.globalAttributes || [],

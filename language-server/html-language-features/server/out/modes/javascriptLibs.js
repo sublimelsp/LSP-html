@@ -8,9 +8,9 @@ exports.loadLibrary = void 0;
 const path_1 = require("path");
 const fs_1 = require("fs");
 const contents = {};
-const serverFolder = path_1.basename(__dirname) === 'dist' ? path_1.dirname(__dirname) : path_1.dirname(path_1.dirname(__dirname));
-const TYPESCRIPT_LIB_SOURCE = path_1.join(serverFolder, '../../node_modules/typescript/lib');
-const JQUERY_PATH = path_1.join(serverFolder, 'lib/jquery.d.ts');
+const serverFolder = (0, path_1.basename)(__dirname) === 'dist' ? (0, path_1.dirname)(__dirname) : (0, path_1.dirname)((0, path_1.dirname)(__dirname));
+const TYPESCRIPT_LIB_SOURCE = (0, path_1.join)(serverFolder, '../../node_modules/typescript/lib');
+const JQUERY_PATH = (0, path_1.join)(serverFolder, 'lib/jquery.d.ts');
 function loadLibrary(name) {
     let content = contents[name];
     if (typeof content !== 'string') {
@@ -19,10 +19,10 @@ function loadLibrary(name) {
             libPath = JQUERY_PATH;
         }
         else {
-            libPath = path_1.join(TYPESCRIPT_LIB_SOURCE, name); // from source
+            libPath = (0, path_1.join)(TYPESCRIPT_LIB_SOURCE, name); // from source
         }
         try {
-            content = fs_1.readFileSync(libPath).toString();
+            content = (0, fs_1.readFileSync)(libPath).toString();
         }
         catch (e) {
             console.log(`Unable to load library ${name} at ${libPath}: ${e.message}`);

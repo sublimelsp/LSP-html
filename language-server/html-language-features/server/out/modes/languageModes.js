@@ -45,19 +45,19 @@ Object.defineProperty(exports, "TokenType", { enumerable: true, get: function ()
 var vscode_languageserver_textdocument_1 = require("vscode-languageserver-textdocument");
 Object.defineProperty(exports, "TextDocument", { enumerable: true, get: function () { return vscode_languageserver_textdocument_1.TextDocument; } });
 function getLanguageModes(supportedLanguages, workspace, clientCapabilities, requestService) {
-    const htmlLanguageService = vscode_html_languageservice_1.getLanguageService({ clientCapabilities, fileSystemProvider: requestService });
-    const cssLanguageService = vscode_css_languageservice_1.getCSSLanguageService({ clientCapabilities, fileSystemProvider: requestService });
-    let documentRegions = languageModelCache_1.getLanguageModelCache(10, 60, document => embeddedSupport_1.getDocumentRegions(htmlLanguageService, document));
+    const htmlLanguageService = (0, vscode_html_languageservice_1.getLanguageService)({ clientCapabilities, fileSystemProvider: requestService });
+    const cssLanguageService = (0, vscode_css_languageservice_1.getCSSLanguageService)({ clientCapabilities, fileSystemProvider: requestService });
+    let documentRegions = (0, languageModelCache_1.getLanguageModelCache)(10, 60, document => (0, embeddedSupport_1.getDocumentRegions)(htmlLanguageService, document));
     let modelCaches = [];
     modelCaches.push(documentRegions);
     let modes = Object.create(null);
-    modes['html'] = htmlMode_1.getHTMLMode(htmlLanguageService, workspace);
+    modes['html'] = (0, htmlMode_1.getHTMLMode)(htmlLanguageService, workspace);
     if (supportedLanguages['css']) {
-        modes['css'] = cssMode_1.getCSSMode(cssLanguageService, documentRegions, workspace);
+        modes['css'] = (0, cssMode_1.getCSSMode)(cssLanguageService, documentRegions, workspace);
     }
     if (supportedLanguages['javascript']) {
-        modes['javascript'] = javascriptMode_1.getJavaScriptMode(documentRegions, 'javascript', workspace);
-        modes['typescript'] = javascriptMode_1.getJavaScriptMode(documentRegions, 'typescript', workspace);
+        modes['javascript'] = (0, javascriptMode_1.getJavaScriptMode)(documentRegions, 'javascript', workspace);
+        modes['typescript'] = (0, javascriptMode_1.getJavaScriptMode)(documentRegions, 'typescript', workspace);
     }
     return {
         async updateDataProviders(dataProviders) {

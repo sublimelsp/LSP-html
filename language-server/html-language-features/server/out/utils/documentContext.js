@@ -11,10 +11,10 @@ function getDocumentContext(documentUri, workspaceFolders) {
     function getRootFolder() {
         for (let folder of workspaceFolders) {
             let folderURI = folder.uri;
-            if (!strings_1.endsWith(folderURI, '/')) {
+            if (!(0, strings_1.endsWith)(folderURI, '/')) {
                 folderURI = folderURI + '/';
             }
-            if (strings_1.startsWith(documentUri, folderURI)) {
+            if ((0, strings_1.startsWith)(documentUri, folderURI)) {
                 return folderURI;
             }
         }
@@ -29,7 +29,7 @@ function getDocumentContext(documentUri, workspaceFolders) {
                 }
             }
             base = base.substr(0, base.lastIndexOf('/') + 1);
-            return requests_1.resolvePath(base, ref);
+            return (0, requests_1.resolvePath)(base, ref);
         },
     };
 }

@@ -63,7 +63,7 @@ function getLanguageServiceHost(scriptKind) {
     };
 }
 function getJavaScriptMode(documentRegions, languageId, workspace) {
-    let jsDocuments = languageModelCache_1.getLanguageModelCache(10, 60, document => documentRegions.get(document).getEmbeddedDocument(languageId));
+    let jsDocuments = (0, languageModelCache_1.getLanguageModelCache)(10, 60, document => documentRegions.get(document).getEmbeddedDocument(languageId));
     const host = getLanguageServiceHost(languageId === 'javascript' ? ts.ScriptKind.JS : ts.ScriptKind.TS);
     let globalSettings = {};
     return {
@@ -93,7 +93,7 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
             if (!completions) {
                 return { isIncomplete: false, items: [] };
             }
-            let replaceRange = convertRange(jsDocument, strings_1.getWordAtText(jsDocument.getText(), offset, JS_WORD_REGEX));
+            let replaceRange = convertRange(jsDocument, (0, strings_1.getWordAtText)(jsDocument.getText(), offset, JS_WORD_REGEX));
             return {
                 isIncomplete: false,
                 items: completions.entries.map(entry => {
@@ -183,7 +183,7 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
             }
             const renameInfos = jsLanguageService.findRenameLocations(jsDocument.uri, jsDocumentPosition, false, false);
             const edits = [];
-            renameInfos === null || renameInfos === void 0 ? void 0 : renameInfos.map(renameInfo => {
+            renameInfos?.map(renameInfo => {
                 edits.push({
                     range: convertRange(jsDocument, renameInfo.textSpan),
                     newText: newName,
@@ -289,7 +289,7 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
             let start = jsDocument.offsetAt(range.start);
             let end = jsDocument.offsetAt(range.end);
             let lastLineRange = null;
-            if (range.end.line > range.start.line && (range.end.character === 0 || strings_1.isWhitespaceOnly(jsDocument.getText().substr(end - range.end.character, range.end.character)))) {
+            if (range.end.line > range.start.line && (range.end.character === 0 || (0, strings_1.isWhitespaceOnly)(jsDocument.getText().substr(end - range.end.character, range.end.character)))) {
                 end -= range.end.character;
                 lastLineRange = languageModes_1.Range.create(languageModes_1.Position.create(range.end.line, 0), range.end);
             }
@@ -340,10 +340,10 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
         async getSemanticTokens(document) {
             const jsDocument = jsDocuments.get(document);
             const jsLanguageService = await host.getLanguageService(jsDocument);
-            return javascriptSemanticTokens_1.getSemanticTokens(jsLanguageService, jsDocument, jsDocument.uri);
+            return (0, javascriptSemanticTokens_1.getSemanticTokens)(jsLanguageService, jsDocument, jsDocument.uri);
         },
         getSemanticTokenLegend() {
-            return javascriptSemanticTokens_1.getSemanticTokenLegend();
+            return (0, javascriptSemanticTokens_1.getSemanticTokenLegend)();
         },
         dispose() {
             host.dispose();
@@ -462,9 +462,9 @@ function computeInitialIndent(document, range, options) {
 }
 function generateIndent(level, options) {
     if (options.insertSpaces) {
-        return strings_1.repeat(' ', level * options.tabSize);
+        return (0, strings_1.repeat)(' ', level * options.tabSize);
     }
     else {
-        return strings_1.repeat('\t', level);
+        return (0, strings_1.repeat)('\t', level);
     }
 }

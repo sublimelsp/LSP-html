@@ -16,7 +16,7 @@ async function format(languageModes, document, formatRange, formattingOptions, s
     if (endPos.character === 0 && endPos.line > 0 && endOffset !== content.length) {
         // if selection ends after a new line, exclude that new line
         let prevLineStart = document.offsetAt(languageModes_1.Position.create(endPos.line - 1, 0));
-        while (strings_1.isEOL(content, endOffset - 1) && endOffset > prevLineStart) {
+        while ((0, strings_1.isEOL)(content, endOffset - 1) && endOffset > prevLineStart) {
             endOffset--;
         }
         formatRange = languageModes_1.Range.create(formatRange.start, document.positionAt(endOffset));
@@ -36,7 +36,7 @@ async function format(languageModes, document, formatRange, formattingOptions, s
         let range = allRanges[i];
         if (!range.attributeValue && range.mode && range.mode.format) {
             let edits = await range.mode.format(document, languageModes_1.Range.create(startPos, range.end), formattingOptions, settings);
-            arrays_1.pushAll(result, edits);
+            (0, arrays_1.pushAll)(result, edits);
         }
         startPos = range.end;
         i++;
@@ -67,7 +67,7 @@ async function format(languageModes, document, formatRange, formattingOptions, s
             }
         }
         if (embeddedEdits.length === 0) {
-            arrays_1.pushAll(result, htmlEdits);
+            (0, arrays_1.pushAll)(result, htmlEdits);
             return result;
         }
         // apply all embedded format edits and create a single edit for all changes

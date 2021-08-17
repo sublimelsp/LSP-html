@@ -15,7 +15,7 @@ async function getSelectionRanges(languageModes, document, positions) {
         if (mode && mode.getSelectionRange) {
             let range = await mode.getSelectionRange(document, position);
             let top = range;
-            while (top.parent && positions_1.insideRangeButNotSame(htmlRange.range, top.parent.range)) {
+            while (top.parent && (0, positions_1.insideRangeButNotSame)(htmlRange.range, top.parent.range)) {
                 top = top.parent;
             }
             top.parent = htmlRange;

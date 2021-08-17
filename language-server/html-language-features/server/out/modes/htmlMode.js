@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getHTMLMode = void 0;
 const languageModelCache_1 = require("../languageModelCache");
 function getHTMLMode(htmlLanguageService, workspace) {
-    let htmlDocuments = languageModelCache_1.getLanguageModelCache(10, 60, document => htmlLanguageService.parseHTMLDocument(document));
+    let htmlDocuments = (0, languageModelCache_1.getLanguageModelCache)(10, 60, document => htmlLanguageService.parseHTMLDocument(document));
     return {
         getId() {
             return 'html';
@@ -26,8 +26,7 @@ function getHTMLMode(htmlLanguageService, workspace) {
             return completionList;
         },
         async doHover(document, position, settings) {
-            var _a;
-            return htmlLanguageService.doHover(document, position, htmlDocuments.get(document), (_a = settings === null || settings === void 0 ? void 0 : settings.html) === null || _a === void 0 ? void 0 : _a.hover);
+            return htmlLanguageService.doHover(document, position, htmlDocuments.get(document), settings?.html?.hover);
         },
         async findDocumentHighlight(document, position) {
             return htmlLanguageService.findDocumentHighlights(document, position, htmlDocuments.get(document));

@@ -11,7 +11,7 @@ const fs = require("fs");
 const vscode_css_languageservice_1 = require("vscode-css-languageservice");
 function getNodeFSRequestService() {
     function ensureFileUri(location) {
-        if (requests_1.getScheme(location) !== 'file') {
+        if ((0, requests_1.getScheme)(location) !== 'file') {
             throw new Error('fileRequestService can only handle file URLs');
         }
     }

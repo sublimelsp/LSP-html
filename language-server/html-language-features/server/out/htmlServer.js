@@ -70,7 +70,6 @@ function startServer(connection, runtime) {
     // After the server has started the client sends an initialize request. The server receives
     // in the passed params the rootPath of the workspace plus the client capabilities
     connection.onInitialize((params) => {
-        var _a, _b;
         const initializationOptions = params.initializationOptions;
         workspaceFolders = params.workspaceFolders;
         if (!Array.isArray(workspaceFolders)) {
@@ -79,14 +78,14 @@ function startServer(connection, runtime) {
                 workspaceFolders.push({ name: '', uri: vscode_uri_1.URI.file(params.rootPath).toString() });
             }
         }
-        requestService = requests_1.getRequestService((initializationOptions === null || initializationOptions === void 0 ? void 0 : initializationOptions.handledSchemas) || ['file'], connection, runtime);
+        requestService = (0, requests_1.getRequestService)(initializationOptions?.handledSchemas || ['file'], connection, runtime);
         const workspace = {
             get settings() { return globalSettings; },
             get folders() { return workspaceFolders; }
         };
-        languageModes = languageModes_1.getLanguageModes((initializationOptions === null || initializationOptions === void 0 ? void 0 : initializationOptions.embeddedLanguages) || { css: true, javascript: true }, workspace, params.capabilities, requestService);
-        const dataPaths = (initializationOptions === null || initializationOptions === void 0 ? void 0 : initializationOptions.dataPaths) || [];
-        customData_1.fetchHTMLDataProviders(dataPaths, requestService).then(dataProviders => {
+        languageModes = (0, languageModes_1.getLanguageModes)(initializationOptions?.embeddedLanguages || { css: true, javascript: true }, workspace, params.capabilities, requestService);
+        const dataPaths = initializationOptions?.dataPaths || [];
+        (0, customData_1.fetchHTMLDataProviders)(dataPaths, requestService).then(dataProviders => {
             languageModes.updateDataProviders(dataProviders);
         });
         documents.onDidClose(e => {
@@ -107,7 +106,7 @@ function startServer(connection, runtime) {
             return c;
         }
         clientSnippetSupport = getClientCapability('textDocument.completion.completionItem.snippetSupport', false);
-        dynamicFormatterRegistration = getClientCapability('textDocument.rangeFormatting.dynamicRegistration', false) && (typeof (initializationOptions === null || initializationOptions === void 0 ? void 0 : initializationOptions.provideFormatter) !== 'boolean');
+        dynamicFormatterRegistration = getClientCapability('textDocument.rangeFormatting.dynamicRegistration', false) && (typeof initializationOptions?.provideFormatter !== 'boolean');
         scopedSettingsSupport = getClientCapability('workspace.configuration', false);
         workspaceFoldersSupport = getClientCapability('workspace.workspaceFolders', false);
         foldingRangeLimit = getClientCapability('textDocument.foldingRange.rangeLimit', Number.MAX_VALUE);
@@ -116,8 +115,8 @@ function startServer(connection, runtime) {
             completionProvider: clientSnippetSupport ? { resolveProvider: true, triggerCharacters: ['.', ':', '<', '"', '=', '/'] } : undefined,
             hoverProvider: true,
             documentHighlightProvider: true,
-            documentRangeFormattingProvider: ((_a = params.initializationOptions) === null || _a === void 0 ? void 0 : _a.provideFormatter) === true,
-            documentFormattingProvider: ((_b = params.initializationOptions) === null || _b === void 0 ? void 0 : _b.provideFormatter) === true,
+            documentRangeFormattingProvider: params.initializationOptions?.provideFormatter === true,
+            documentFormattingProvider: params.initializationOptions?.provideFormatter === true,
             documentLinkProvider: { resolveProvider: false },
             documentSymbolProvider: true,
             definitionProvider: true,
@@ -218,7 +217,7 @@ function startServer(connection, runtime) {
                 if (latestTextDocument && latestTextDocument.version === version) { // check no new version has come in after in after the async op
                     for (const mode of modes) {
                         if (mode.doValidation && isValidationEnabled(mode.getId(), settings)) {
-                            arrays_1.pushAll(diagnostics, await mode.doValidation(latestTextDocument, settings));
+                            (0, arrays_1.pushAll)(diagnostics, await mode.doValidation(latestTextDocument, settings));
                         }
                     }
                     connection.sendDiagnostics({ uri: latestTextDocument.uri, diagnostics });
@@ -226,11 +225,11 @@ function startServer(connection, runtime) {
             }
         }
         catch (e) {
-            connection.console.error(runner_1.formatError(`Error while validating ${textDocument.uri}`, e));
+            connection.console.error((0, runner_1.formatError)(`Error while validating ${textDocument.uri}`, e));
         }
     }
     connection.onCompletion(async (textDocumentPosition, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(textDocumentPosition.textDocument.uri);
             if (!document) {
                 return null;
@@ -249,12 +248,12 @@ function startServer(connection, runtime) {
                 connection.telemetry.logEvent({ key: 'html.embbedded.complete', value: { languageId: mode.getId() } });
             }
             const settings = await getDocumentSettings(document, () => doComplete.length > 2);
-            const documentContext = documentContext_1.getDocumentContext(document.uri, workspaceFolders);
+            const documentContext = (0, documentContext_1.getDocumentContext)(document.uri, workspaceFolders);
             return doComplete(document, textDocumentPosition.position, documentContext, settings);
         }, null, `Error while computing completions for ${textDocumentPosition.textDocument.uri}`, token);
     });
     connection.onCompletionResolve((item, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const data = item.data;
             if (data && data.languageId && data.uri) {
                 const mode = languageModes.getMode(data.languageId);
@@ -267,11 +266,11 @@ function startServer(connection, runtime) {
         }, item, `Error while resolving completion proposal`, token);
     });
     connection.onHover((textDocumentPosition, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(textDocumentPosition.textDocument.uri);
             if (document) {
                 const mode = languageModes.getModeAtPosition(document, textDocumentPosition.position);
-                const doHover = mode === null || mode === void 0 ? void 0 : mode.doHover;
+                const doHover = mode?.doHover;
                 if (doHover) {
                     const settings = await getDocumentSettings(document, () => doHover.length > 2);
                     return doHover(document, textDocumentPosition.position, settings);
@@ -281,7 +280,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing hover for ${textDocumentPosition.textDocument.uri}`, token);
     });
     connection.onDocumentHighlight((documentHighlightParams, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(documentHighlightParams.textDocument.uri);
             if (document) {
                 const mode = languageModes.getModeAtPosition(document, documentHighlightParams.position);
@@ -293,7 +292,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing document highlights for ${documentHighlightParams.textDocument.uri}`, token);
     });
     connection.onDefinition((definitionParams, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(definitionParams.textDocument.uri);
             if (document) {
                 const mode = languageModes.getModeAtPosition(document, definitionParams.position);
@@ -305,7 +304,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing definitions for ${definitionParams.textDocument.uri}`, token);
     });
     connection.onReferences((referenceParams, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(referenceParams.textDocument.uri);
             if (document) {
                 const mode = languageModes.getModeAtPosition(document, referenceParams.position);
@@ -317,7 +316,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing references for ${referenceParams.textDocument.uri}`, token);
     });
     connection.onSignatureHelp((signatureHelpParms, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(signatureHelpParms.textDocument.uri);
             if (document) {
                 const mode = languageModes.getModeAtPosition(document, signatureHelpParms.position);
@@ -337,25 +336,25 @@ function startServer(connection, runtime) {
             }
             const unformattedTags = settings && settings.html && settings.html.format && settings.html.format.unformatted || '';
             const enabledModes = { css: !unformattedTags.match(/\bstyle\b/), javascript: !unformattedTags.match(/\bscript\b/) };
-            return formatting_1.format(languageModes, document, range !== null && range !== void 0 ? range : getFullRange(document), options, settings, enabledModes);
+            return (0, formatting_1.format)(languageModes, document, range ?? getFullRange(document), options, settings, enabledModes);
         }
         return [];
     }
     connection.onDocumentRangeFormatting((formatParams, token) => {
-        return runner_1.runSafe(runtime, () => onFormat(formatParams.textDocument, formatParams.range, formatParams.options), [], `Error while formatting range for ${formatParams.textDocument.uri}`, token);
+        return (0, runner_1.runSafe)(runtime, () => onFormat(formatParams.textDocument, formatParams.range, formatParams.options), [], `Error while formatting range for ${formatParams.textDocument.uri}`, token);
     });
     connection.onDocumentFormatting((formatParams, token) => {
-        return runner_1.runSafe(runtime, () => onFormat(formatParams.textDocument, undefined, formatParams.options), [], `Error while formatting ${formatParams.textDocument.uri}`, token);
+        return (0, runner_1.runSafe)(runtime, () => onFormat(formatParams.textDocument, undefined, formatParams.options), [], `Error while formatting ${formatParams.textDocument.uri}`, token);
     });
     connection.onDocumentLinks((documentLinkParam, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(documentLinkParam.textDocument.uri);
             const links = [];
             if (document) {
-                const documentContext = documentContext_1.getDocumentContext(document.uri, workspaceFolders);
+                const documentContext = (0, documentContext_1.getDocumentContext)(document.uri, workspaceFolders);
                 for (const m of languageModes.getAllModesInDocument(document)) {
                     if (m.findDocumentLinks) {
-                        arrays_1.pushAll(links, await m.findDocumentLinks(document, documentContext));
+                        (0, arrays_1.pushAll)(links, await m.findDocumentLinks(document, documentContext));
                     }
                 }
             }
@@ -363,13 +362,13 @@ function startServer(connection, runtime) {
         }, [], `Error while document links for ${documentLinkParam.textDocument.uri}`, token);
     });
     connection.onDocumentSymbol((documentSymbolParms, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(documentSymbolParms.textDocument.uri);
             const symbols = [];
             if (document) {
                 for (const m of languageModes.getAllModesInDocument(document)) {
                     if (m.findDocumentSymbols) {
-                        arrays_1.pushAll(symbols, await m.findDocumentSymbols(document));
+                        (0, arrays_1.pushAll)(symbols, await m.findDocumentSymbols(document));
                     }
                 }
             }
@@ -377,13 +376,13 @@ function startServer(connection, runtime) {
         }, [], `Error while computing document symbols for ${documentSymbolParms.textDocument.uri}`, token);
     });
     connection.onRequest(vscode_languageserver_1.DocumentColorRequest.type, (params, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const infos = [];
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 for (const m of languageModes.getAllModesInDocument(document)) {
                     if (m.findDocumentColors) {
-                        arrays_1.pushAll(infos, await m.findDocumentColors(document));
+                        (0, arrays_1.pushAll)(infos, await m.findDocumentColors(document));
                     }
                 }
             }
@@ -391,7 +390,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing document colors for ${params.textDocument.uri}`, token);
     });
     connection.onRequest(vscode_languageserver_1.ColorPresentationRequest.type, (params, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 const mode = languageModes.getModeAtPosition(document, params.range.start);
@@ -403,7 +402,7 @@ function startServer(connection, runtime) {
         }, [], `Error while computing color presentations for ${params.textDocument.uri}`, token);
     });
     connection.onRequest(TagCloseRequest.type, (params, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 const pos = params.position;
@@ -418,25 +417,25 @@ function startServer(connection, runtime) {
         }, null, `Error while computing tag close actions for ${params.textDocument.uri}`, token);
     });
     connection.onFoldingRanges((params, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
-                return htmlFolding_1.getFoldingRanges(languageModes, document, foldingRangeLimit, token);
+                return (0, htmlFolding_1.getFoldingRanges)(languageModes, document, foldingRangeLimit, token);
             }
             return null;
         }, null, `Error while computing folding regions for ${params.textDocument.uri}`, token);
     });
     connection.onSelectionRanges((params, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
-                return selectionRanges_1.getSelectionRanges(languageModes, document, params.positions);
+                return (0, selectionRanges_1.getSelectionRanges)(languageModes, document, params.positions);
             }
             return [];
         }, [], `Error while computing selection ranges for ${params.textDocument.uri}`, token);
     });
     connection.onRenameRequest((params, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             const position = params.position;
             if (document) {
@@ -449,7 +448,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing rename for ${params.textDocument.uri}`, token);
     });
     connection.languages.onLinkedEditingRange((params, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 const pos = params.position;
@@ -469,12 +468,12 @@ function startServer(connection, runtime) {
     let semanticTokensProvider;
     function getSemanticTokenProvider() {
         if (!semanticTokensProvider) {
-            semanticTokensProvider = semanticTokens_1.newSemanticTokenProvider(languageModes);
+            semanticTokensProvider = (0, semanticTokens_1.newSemanticTokenProvider)(languageModes);
         }
         return semanticTokensProvider;
     }
     connection.onRequest(SemanticTokenRequest.type, (params, token) => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 return getSemanticTokenProvider().getSemanticTokens(document, params.ranges);
@@ -483,12 +482,12 @@ function startServer(connection, runtime) {
         }, null, `Error while computing semantic tokens for ${params.textDocument.uri}`, token);
     });
     connection.onRequest(SemanticTokenLegendRequest.type, token => {
-        return runner_1.runSafe(runtime, async () => {
+        return (0, runner_1.runSafe)(runtime, async () => {
             return getSemanticTokenProvider().legend;
         }, null, `Error while computing semantic tokens legend`, token);
     });
     connection.onNotification(CustomDataChangedNotification.type, dataPaths => {
-        customData_1.fetchHTMLDataProviders(dataPaths, requestService).then(dataProviders => {
+        (0, customData_1.fetchHTMLDataProviders)(dataPaths, requestService).then(dataProviders => {
             languageModes.updateDataProviders(dataProviders);
         });
     });
