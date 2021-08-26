@@ -1,6 +1,6 @@
 # Package Development
 
-Here is pre-built [vscode-html-languageserver](https://github.com/vscode-langservers/vscode-html-languageserver).
+Here is pre-built [VS Code's HTML language server](https://github.com/microsoft/vscode/tree/main/extensions/html-language-features/server).
 
 You don't have to go here if you are just an end user.
 
