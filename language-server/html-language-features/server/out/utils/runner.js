@@ -25,6 +25,7 @@ function runSafe(runtime, func, errorVal, errorMessage, token) {
         runtime.timer.setImmediate(() => {
             if (token.isCancellationRequested) {
                 resolve(cancelValue());
+                return;
             }
             return func().then(result => {
                 if (token.isCancellationRequested) {
