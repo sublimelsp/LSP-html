@@ -16,6 +16,8 @@ class LspHtmlPlugin(NpmClientHandler):
     server_directory = "language-server"
     server_binary_path = os.path.join(
         server_directory,
+        "html-language-features",
+        "server",
         "out",
         "node",
         "htmlServerMain.js",
