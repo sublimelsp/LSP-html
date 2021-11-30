@@ -26,6 +26,6 @@ const runtime = {
             return { dispose: () => clearTimeout(handle) };
         }
     },
-    file: (0, nodeFs_1.getNodeFSRequestService)()
+    fileFs: (0, nodeFs_1.getNodeFileFS)()
 };
 (0, htmlServer_1.startServer)(connection, runtime);

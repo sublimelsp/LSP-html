@@ -4,30 +4,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNodeFSRequestService = void 0;
+exports.getNodeFileFS = void 0;
 const requests_1 = require("../requests");
 const vscode_uri_1 = require("vscode-uri");
 const fs = require("fs");
 const vscode_css_languageservice_1 = require("vscode-css-languageservice");
-function getNodeFSRequestService() {
+function getNodeFileFS() {
     function ensureFileUri(location) {
         if ((0, requests_1.getScheme)(location) !== 'file') {
-            throw new Error('fileRequestService can only handle file URLs');
+            throw new Error('fileSystemProvider can only handle file URLs');
         }
     }
     return {
-        getContent(location, encoding) {
-            ensureFileUri(location);
-            return new Promise((c, e) => {
-                const uri = vscode_uri_1.URI.parse(location);
-                fs.readFile(uri.fsPath, encoding, (err, buf) => {
-                    if (err) {
-                        return e(err);
-                    }
-                    c(buf.toString());
-                });
-            });
-        },
         stat(location) {
             ensureFileUri(location);
             return new Promise((c, e) => {
@@ -87,4 +75,4 @@ function getNodeFSRequestService() {
         }
     };
 }
-exports.getNodeFSRequestService = getNodeFSRequestService;
+exports.getNodeFileFS = getNodeFileFS;

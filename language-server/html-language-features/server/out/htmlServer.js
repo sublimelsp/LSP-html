@@ -21,6 +21,10 @@ var CustomDataChangedNotification;
 (function (CustomDataChangedNotification) {
     CustomDataChangedNotification.type = new vscode_languageserver_1.NotificationType('html/customDataChanged');
 })(CustomDataChangedNotification || (CustomDataChangedNotification = {}));
+var CustomDataContent;
+(function (CustomDataContent) {
+    CustomDataContent.type = new vscode_languageserver_1.RequestType('html/customDataContent');
+})(CustomDataContent || (CustomDataContent = {}));
 var TagCloseRequest;
 (function (TagCloseRequest) {
     TagCloseRequest.type = new vscode_languageserver_1.RequestType('html/tag');
@@ -46,8 +50,11 @@ function startServer(connection, runtime) {
     let scopedSettingsSupport = false;
     let workspaceFoldersSupport = false;
     let foldingRangeLimit = Number.MAX_VALUE;
-    const notReady = () => Promise.reject('Not Ready');
-    let requestService = { getContent: notReady, stat: notReady, readDirectory: notReady };
+    const customDataRequestService = {
+        getContent(uri) {
+            return connection.sendRequest(CustomDataContent.type, uri);
+        }
+    };
     let globalSettings = {};
     let documentSettings = {};
     // remove document settings on close
@@ -78,14 +85,15 @@ function startServer(connection, runtime) {
                 workspaceFolders.push({ name: '', uri: vscode_uri_1.URI.file(params.rootPath).toString() });
             }
         }
-        requestService = (0, requests_1.getRequestService)(initializationOptions?.handledSchemas || ['file'], connection, runtime);
+        const handledSchemas = initializationOptions?.handledSchemas ?? ['file'];
+        const fileSystemProvider = (0, requests_1.getFileSystemProvider)(handledSchemas, connection, runtime);
         const workspace = {
             get settings() { return globalSettings; },
             get folders() { return workspaceFolders; }
         };
-        languageModes = (0, languageModes_1.getLanguageModes)(initializationOptions?.embeddedLanguages || { css: true, javascript: true }, workspace, params.capabilities, requestService);
+        languageModes = (0, languageModes_1.getLanguageModes)(initializationOptions?.embeddedLanguages || { css: true, javascript: true }, workspace, params.capabilities, fileSystemProvider);
         const dataPaths = initializationOptions?.dataPaths || [];
-        (0, customData_1.fetchHTMLDataProviders)(dataPaths, requestService).then(dataProviders => {
+        (0, customData_1.fetchHTMLDataProviders)(dataPaths, customDataRequestService).then(dataProviders => {
             languageModes.updateDataProviders(dataProviders);
         });
         documents.onDidClose(e => {
@@ -487,7 +495,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing semantic tokens legend`, token);
     });
     connection.onNotification(CustomDataChangedNotification.type, dataPaths => {
-        (0, customData_1.fetchHTMLDataProviders)(dataPaths, requestService).then(dataProviders => {
+        (0, customData_1.fetchHTMLDataProviders)(dataPaths, customDataRequestService).then(dataProviders => {
             languageModes.updateDataProviders(dataProviders);
         });
     });

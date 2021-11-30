@@ -4,13 +4,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.joinPath = exports.normalizePath = exports.resolvePath = exports.isAbsolutePath = exports.extname = exports.basename = exports.dirname = exports.getScheme = exports.getRequestService = exports.FileType = exports.FsReadDirRequest = exports.FsStatRequest = exports.FsContentRequest = void 0;
+exports.joinPath = exports.normalizePath = exports.resolvePath = exports.isAbsolutePath = exports.extname = exports.basename = exports.dirname = exports.getScheme = exports.getFileSystemProvider = exports.FileType = exports.FsReadDirRequest = exports.FsStatRequest = void 0;
 const vscode_uri_1 = require("vscode-uri");
 const vscode_languageserver_1 = require("vscode-languageserver");
-var FsContentRequest;
-(function (FsContentRequest) {
-    FsContentRequest.type = new vscode_languageserver_1.RequestType('fs/content');
-})(FsContentRequest = exports.FsContentRequest || (exports.FsContentRequest = {}));
 var FsStatRequest;
 (function (FsStatRequest) {
     FsStatRequest.type = new vscode_languageserver_1.RequestType('fs/stat');
@@ -38,42 +34,25 @@ var FileType;
      */
     FileType[FileType["SymbolicLink"] = 64] = "SymbolicLink";
 })(FileType = exports.FileType || (exports.FileType = {}));
-function getRequestService(handledSchemas, connection, runtime) {
-    const builtInHandlers = {};
-    for (let protocol of handledSchemas) {
-        if (protocol === 'file') {
-            builtInHandlers[protocol] = runtime.file;
-        }
-        else if (protocol === 'http' || protocol === 'https') {
-            builtInHandlers[protocol] = runtime.http;
-        }
-    }
+function getFileSystemProvider(handledSchemas, connection, runtime) {
+    const fileFs = runtime.fileFs && handledSchemas.indexOf('file') !== -1 ? runtime.fileFs : undefined;
     return {
         async stat(uri) {
-            const handler = builtInHandlers[getScheme(uri)];
-            if (handler) {
-                return handler.stat(uri);
+            if (fileFs && uri.startsWith('file:')) {
+                return fileFs.stat(uri);
             }
             const res = await connection.sendRequest(FsStatRequest.type, uri.toString());
             return res;
         },
         readDirectory(uri) {
-            const handler = builtInHandlers[getScheme(uri)];
-            if (handler) {
-                return handler.readDirectory(uri);
+            if (fileFs && uri.startsWith('file:')) {
+                return fileFs.readDirectory(uri);
             }
             return connection.sendRequest(FsReadDirRequest.type, uri.toString());
-        },
-        getContent(uri, encoding) {
-            const handler = builtInHandlers[getScheme(uri)];
-            if (handler) {
-                return handler.getContent(uri, encoding);
-            }
-            return connection.sendRequest(FsContentRequest.type, { uri: uri.toString(), encoding });
         }
     };
 }
-exports.getRequestService = getRequestService;
+exports.getFileSystemProvider = getFileSystemProvider;
 function getScheme(uri) {
     return uri.substr(0, uri.indexOf(':'));
 }
