@@ -363,80 +363,104 @@ function convertRange(document, span) {
 }
 function convertKind(kind) {
     switch (kind) {
-        case 'primitive type':
-        case 'keyword':
+        case "primitive type" /* primitiveType */:
+        case "keyword" /* keyword */:
             return languageModes_1.CompletionItemKind.Keyword;
-        case 'var':
-        case 'local var':
+        case "const" /* const */:
+        case "let" /* let */:
+        case "var" /* variable */:
+        case "local var" /* localVariable */:
+        case "alias" /* alias */:
+        case "parameter" /* parameter */:
             return languageModes_1.CompletionItemKind.Variable;
-        case 'property':
-        case 'getter':
-        case 'setter':
+        case "property" /* memberVariable */:
+        case "getter" /* memberGetAccessor */:
+        case "setter" /* memberSetAccessor */:
             return languageModes_1.CompletionItemKind.Field;
-        case 'function':
-        case 'method':
-        case 'construct':
-        case 'call':
-        case 'index':
+        case "function" /* function */:
+        case "local function" /* localFunction */:
             return languageModes_1.CompletionItemKind.Function;
-        case 'enum':
+        case "method" /* method */:
+        case "construct" /* constructSignature */:
+        case "call" /* callSignature */:
+        case "index" /* indexSignature */:
+            return languageModes_1.CompletionItemKind.Method;
+        case "enum" /* enum */:
             return languageModes_1.CompletionItemKind.Enum;
-        case 'module':
+        case "enum member" /* enumMember */:
+            return languageModes_1.CompletionItemKind.EnumMember;
+        case "module" /* module */:
+        case "external module name" /* externalModuleName */:
             return languageModes_1.CompletionItemKind.Module;
-        case 'class':
+        case "class" /* class */:
+        case "type" /* type */:
             return languageModes_1.CompletionItemKind.Class;
-        case 'interface':
+        case "interface" /* interface */:
             return languageModes_1.CompletionItemKind.Interface;
-        case 'warning':
+        case "warning" /* warning */:
+            return languageModes_1.CompletionItemKind.Text;
+        case "script" /* script */:
             return languageModes_1.CompletionItemKind.File;
+        case "directory" /* directory */:
+            return languageModes_1.CompletionItemKind.Folder;
+        case "string" /* string */:
+            return languageModes_1.CompletionItemKind.Constant;
+        default:
+            return languageModes_1.CompletionItemKind.Property;
     }
-    return languageModes_1.CompletionItemKind.Property;
 }
 function convertSymbolKind(kind) {
     switch (kind) {
-        case 'var':
-        case 'local var':
-        case 'const':
-            return languageModes_1.SymbolKind.Variable;
-        case 'function':
-        case 'local function':
-            return languageModes_1.SymbolKind.Function;
-        case 'enum':
-            return languageModes_1.SymbolKind.Enum;
-        case 'module':
-            return languageModes_1.SymbolKind.Module;
-        case 'class':
-            return languageModes_1.SymbolKind.Class;
-        case 'interface':
-            return languageModes_1.SymbolKind.Interface;
-        case 'method':
-            return languageModes_1.SymbolKind.Method;
-        case 'property':
-        case 'getter':
-        case 'setter':
-            return languageModes_1.SymbolKind.Property;
+        case "module" /* module */: return languageModes_1.SymbolKind.Module;
+        case "class" /* class */: return languageModes_1.SymbolKind.Class;
+        case "enum" /* enum */: return languageModes_1.SymbolKind.Enum;
+        case "enum member" /* enumMember */: return languageModes_1.SymbolKind.EnumMember;
+        case "interface" /* interface */: return languageModes_1.SymbolKind.Interface;
+        case "index" /* indexSignature */: return languageModes_1.SymbolKind.Method;
+        case "call" /* callSignature */: return languageModes_1.SymbolKind.Method;
+        case "method" /* method */: return languageModes_1.SymbolKind.Method;
+        case "property" /* memberVariable */: return languageModes_1.SymbolKind.Property;
+        case "getter" /* memberGetAccessor */: return languageModes_1.SymbolKind.Property;
+        case "setter" /* memberSetAccessor */: return languageModes_1.SymbolKind.Property;
+        case "var" /* variable */: return languageModes_1.SymbolKind.Variable;
+        case "let" /* let */: return languageModes_1.SymbolKind.Variable;
+        case "const" /* const */: return languageModes_1.SymbolKind.Variable;
+        case "local var" /* localVariable */: return languageModes_1.SymbolKind.Variable;
+        case "alias" /* alias */: return languageModes_1.SymbolKind.Variable;
+        case "function" /* function */: return languageModes_1.SymbolKind.Function;
+        case "local function" /* localFunction */: return languageModes_1.SymbolKind.Function;
+        case "construct" /* constructSignature */: return languageModes_1.SymbolKind.Constructor;
+        case "constructor" /* constructorImplementation */: return languageModes_1.SymbolKind.Constructor;
+        case "type parameter" /* typeParameter */: return languageModes_1.SymbolKind.TypeParameter;
+        case "string" /* string */: return languageModes_1.SymbolKind.String;
+        default: return languageModes_1.SymbolKind.Variable;
     }
-    return languageModes_1.SymbolKind.Variable;
 }
 function convertOptions(options, formatSettings, initialIndentLevel) {
     return {
-        ConvertTabsToSpaces: options.insertSpaces,
-        TabSize: options.tabSize,
-        IndentSize: options.tabSize,
-        IndentStyle: ts.IndentStyle.Smart,
-        NewLineCharacter: '\n',
-        BaseIndentSize: options.tabSize * initialIndentLevel,
-        InsertSpaceAfterCommaDelimiter: Boolean(!formatSettings || formatSettings.insertSpaceAfterCommaDelimiter),
-        InsertSpaceAfterSemicolonInForStatements: Boolean(!formatSettings || formatSettings.insertSpaceAfterSemicolonInForStatements),
-        InsertSpaceBeforeAndAfterBinaryOperators: Boolean(!formatSettings || formatSettings.insertSpaceBeforeAndAfterBinaryOperators),
-        InsertSpaceAfterKeywordsInControlFlowStatements: Boolean(!formatSettings || formatSettings.insertSpaceAfterKeywordsInControlFlowStatements),
-        InsertSpaceAfterFunctionKeywordForAnonymousFunctions: Boolean(!formatSettings || formatSettings.insertSpaceAfterFunctionKeywordForAnonymousFunctions),
-        InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis: Boolean(formatSettings && formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis),
-        InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets: Boolean(formatSettings && formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets),
-        InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: Boolean(formatSettings && formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces),
-        InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces: Boolean(formatSettings && formatSettings.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces),
-        PlaceOpenBraceOnNewLineForControlBlocks: Boolean(formatSettings && formatSettings.placeOpenBraceOnNewLineForFunctions),
-        PlaceOpenBraceOnNewLineForFunctions: Boolean(formatSettings && formatSettings.placeOpenBraceOnNewLineForControlBlocks)
+        convertTabsToSpaces: options.insertSpaces,
+        tabSize: options.tabSize,
+        indentSize: options.tabSize,
+        indentStyle: ts.IndentStyle.Smart,
+        newLineCharacter: '\n',
+        baseIndentSize: options.tabSize * initialIndentLevel,
+        insertSpaceAfterCommaDelimiter: Boolean(!formatSettings || formatSettings.insertSpaceAfterCommaDelimiter),
+        insertSpaceAfterConstructor: Boolean(formatSettings && formatSettings.insertSpaceAfterConstructor),
+        insertSpaceAfterSemicolonInForStatements: Boolean(!formatSettings || formatSettings.insertSpaceAfterSemicolonInForStatements),
+        insertSpaceBeforeAndAfterBinaryOperators: Boolean(!formatSettings || formatSettings.insertSpaceBeforeAndAfterBinaryOperators),
+        insertSpaceAfterKeywordsInControlFlowStatements: Boolean(!formatSettings || formatSettings.insertSpaceAfterKeywordsInControlFlowStatements),
+        insertSpaceAfterFunctionKeywordForAnonymousFunctions: Boolean(!formatSettings || formatSettings.insertSpaceAfterFunctionKeywordForAnonymousFunctions),
+        insertSpaceBeforeFunctionParenthesis: Boolean(formatSettings && formatSettings.insertSpaceBeforeFunctionParenthesis),
+        insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis: Boolean(formatSettings && formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis),
+        insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets: Boolean(formatSettings && formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets),
+        insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: Boolean(formatSettings && formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces),
+        insertSpaceAfterOpeningAndBeforeClosingEmptyBraces: Boolean(!formatSettings || formatSettings.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces),
+        insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces: Boolean(formatSettings && formatSettings.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces),
+        insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces: Boolean(formatSettings && formatSettings.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces),
+        insertSpaceAfterTypeAssertion: Boolean(formatSettings && formatSettings.insertSpaceAfterTypeAssertion),
+        placeOpenBraceOnNewLineForControlBlocks: Boolean(formatSettings && formatSettings.placeOpenBraceOnNewLineForFunctions),
+        placeOpenBraceOnNewLineForFunctions: Boolean(formatSettings && formatSettings.placeOpenBraceOnNewLineForControlBlocks),
+        semicolons: formatSettings?.semicolons
     };
 }
 function computeInitialIndent(document, range, options) {
