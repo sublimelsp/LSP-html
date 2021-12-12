@@ -1,17 +1,6 @@
 {
 	"command": ["${node_bin}", "${server_path}", "--stdio"],
 	"schemes": ["file", "buffer", "res"],
-	"languages": [
-		{
-			"languageId": "html",
-			// ST3 configuration
-			"scopes": ["text.html.basic"],
-			"syntaxes": ["Packages/HTML/HTML.sublime-syntax"],
-			// ST4 configuration
-			"document_selector": "text.html.basic",
-			"feature_selector": "text.html",
-		},
-	],
 	"initializationOptions": {
 		"embeddedLanguages": {
 			"css": true,
@@ -23,9 +12,8 @@
 	"settings": {
 		// Enable/disable autoclosing of HTML tags.
 		"html.autoClosingTags": true,
-		// A list of relative file paths pointing to JSON files following the [custom data
-		// format](https://github.com/microsoft/vscode-html-
-		// languageservice/blob/master/docs/customData.md).
+		// A list of relative file paths pointing to JSON files following the
+		// custom data format (https://github.com/microsoft/vscode-html-languageservice/blob/master/docs/customData.md).
 		// VS Code loads custom data on startup to enhance its HTML support for the custom HTML
 		// tags, attributes and attribute values you specify in the JSON files.
 		// The file paths are relative to workspace and only workspace folder settings are
@@ -133,5 +121,16 @@
 		"javascript.preferences.importModuleSpecifier": "auto",
 		"javascript.preferences.renameShorthandProperties": true,
 		"javascript.updateImportsOnFileMove.enabled": "prompt",
-	}
+	},
+	// ST4 configuration
+	"selector": "text.html.basic",
+	"feature_selector": "text.html",
+	// ST3 configuration
+	"languages": [
+		{
+			"languageId": "html",
+			"scopes": ["text.html.basic"],
+			"syntaxes": ["Packages/HTML/HTML.sublime-syntax"],
+		},
+	],
 }
