@@ -50,11 +50,21 @@ function getHTMLMode(htmlLanguageService, workspace) {
         async getFoldingRanges(document) {
             return htmlLanguageService.getFoldingRanges(document);
         },
-        async doAutoClose(document, position) {
+        async doAutoInsert(document, position, kind, settings = workspace.settings) {
             const offset = document.offsetAt(position);
             const text = document.getText();
-            if (offset > 0 && text.charAt(offset - 1).match(/[>\/]/g)) {
-                return htmlLanguageService.doTagComplete(document, position, htmlDocuments.get(document));
+            if (kind === 'autoQuote') {
+                if (offset > 0 && text.charAt(offset - 1) === '=') {
+                    const htmlSettings = settings?.html;
+                    const options = merge(htmlSettings?.suggest, {});
+                    options.attributeDefaultValue = htmlSettings?.completion?.attributeDefaultValue ?? 'doublequotes';
+                    return htmlLanguageService.doQuoteComplete(document, position, htmlDocuments.get(document), options);
+                }
+            }
+            else if (kind === 'autoClose') {
+                if (offset > 0 && text.charAt(offset - 1).match(/[>\/]/g)) {
+                    return htmlLanguageService.doTagComplete(document, position, htmlDocuments.get(document));
+                }
             }
             return null;
         },

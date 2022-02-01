@@ -25,10 +25,10 @@ var CustomDataContent;
 (function (CustomDataContent) {
     CustomDataContent.type = new vscode_languageserver_1.RequestType('html/customDataContent');
 })(CustomDataContent || (CustomDataContent = {}));
-var TagCloseRequest;
-(function (TagCloseRequest) {
-    TagCloseRequest.type = new vscode_languageserver_1.RequestType('html/tag');
-})(TagCloseRequest || (TagCloseRequest = {}));
+var AutoInsertRequest;
+(function (AutoInsertRequest) {
+    AutoInsertRequest.type = new vscode_languageserver_1.RequestType('html/autoInsert');
+})(AutoInsertRequest || (AutoInsertRequest = {}));
 var SemanticTokenRequest;
 (function (SemanticTokenRequest) {
     SemanticTokenRequest.type = new vscode_languageserver_1.RequestType('html/semanticTokens');
@@ -409,20 +409,20 @@ function startServer(connection, runtime) {
             return [];
         }, [], `Error while computing color presentations for ${params.textDocument.uri}`, token);
     });
-    connection.onRequest(TagCloseRequest.type, (params, token) => {
+    connection.onRequest(AutoInsertRequest.type, (params, token) => {
         return (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 const pos = params.position;
                 if (pos.character > 0) {
                     const mode = languageModes.getModeAtPosition(document, languageModes_1.Position.create(pos.line, pos.character - 1));
-                    if (mode && mode.doAutoClose) {
-                        return mode.doAutoClose(document, pos);
+                    if (mode && mode.doAutoInsert) {
+                        return mode.doAutoInsert(document, pos, params.kind);
                     }
                 }
             }
             return null;
-        }, null, `Error while computing tag close actions for ${params.textDocument.uri}`, token);
+        }, null, `Error while computing auto insert actions for ${params.textDocument.uri}`, token);
     });
     connection.onFoldingRanges((params, token) => {
         return (0, runner_1.runSafe)(runtime, async () => {
