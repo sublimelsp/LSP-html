@@ -27,6 +27,26 @@
                       "description": "Enable/disable autoclosing of HTML tags.",
                       "type": "boolean"
                     },
+                    "html.autoCreateQuotes": {
+                      "default": true,
+                      "description": "Enable/disable auto creation of quotes for HTML attribute assignment. The type of quotes can be configured by `#html.completion.attributeDefaultValue#`.",
+                      "type": "boolean"
+                    },
+                    "html.completion.attributeDefaultValue": {
+                      "default": "doublequotes",
+                      "description": "Controls the default value for attributes when completion is accepted.",
+                      "enum": [
+                        "doublequotes",
+                        "singlequotes",
+                        "empty"
+                      ],
+                      "enumDescriptions": [
+                        "Attribute value is set to \"\".",
+                        "Attribute value is set to ''.",
+                        "Attribute value is not set."
+                      ],
+                      "type": "string"
+                    },
                     "html.customData": {
                       "default": [],
                       "items": {
@@ -127,7 +147,7 @@
                     },
                     "html.format.wrapAttributesIndentSize": {
                       "default": null,
-                      "description": "Alignment size when using 'force aligned' and 'aligned multiple' in `#html.format.wrapAttributes#` or `null` to use the default indent size.",
+                      "markdownDescription": "Indent wrapped attributes to after N characters. Use `null` to use the default indent size. Ignored if `#html.format.wrapAttributes#` is set to 'aligned'.",
                       "type": [
                         "number",
                         "null"
@@ -158,6 +178,16 @@
                       "default": true,
                       "description": "Controls whether the built-in HTML language support suggests HTML5 tags, properties and values.",
                       "type": "boolean"
+                    },
+                    "html.trace.server": {
+                      "default": "off",
+                      "description": "Traces the communication between VS Code and the HTML language server.",
+                      "enum": [
+                        "off",
+                        "messages",
+                        "verbose"
+                      ],
+                      "type": "string"
                     },
                     "html.validate.scripts": {
                       "default": true,

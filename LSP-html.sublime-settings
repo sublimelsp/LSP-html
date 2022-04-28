@@ -12,8 +12,14 @@
 	"settings": {
 		// Enable/disable autoclosing of HTML tags.
 		"html.autoClosingTags": true,
-		// A list of relative file paths pointing to JSON files following the
-		// custom data format (https://github.com/microsoft/vscode-html-languageservice/blob/master/docs/customData.md).
+		// Enable/disable auto creation of quotes for HTML attribute assignment. The type of quotes
+		// can be configured by `#html.completion.attributeDefaultValue#`.
+		"html.autoCreateQuotes": true,
+		// Controls the default value for attributes when completion is accepted.
+		// possible values: doublequotes, singlequotes, empty
+		"html.completion.attributeDefaultValue": "doublequotes",
+		// A list of relative file paths pointing to JSON files following the [custom data
+		// format](https://github.com/microsoft/vscode-html-languageservice/blob/master/docs/customData.md).
 		// VS Code loads custom data on startup to enhance its HTML support for the custom HTML
 		// tags, attributes and attribute values you specify in the JSON files.
 		// The file paths are relative to workspace and only workspace folder settings are
@@ -48,8 +54,8 @@
 		// Wrap attributes.
 		// possible values: auto, force, force-aligned, force-expand-multiline, aligned-multiple, preserve, preserve-aligned
 		"html.format.wrapAttributes": "auto",
-		// Alignment size when using 'force aligned' and 'aligned multiple' in
-		// `#html.format.wrapAttributes#` or `null` to use the default indent size.
+		// Indent wrapped attributes to after N characters. Use `null` to use the default indent
+		// size. Ignored if `#html.format.wrapAttributes#` is set to 'aligned'.
 		"html.format.wrapAttributesIndentSize": null,
 		// Maximum amount of characters per line (0 = disable).
 		"html.format.wrapLineLength": 120,
@@ -57,37 +63,52 @@
 		"html.hover.documentation": true,
 		// Show references to MDN in hover.
 		"html.hover.references": true,
+		// Enable/disable mirroring cursor on matching HTML tag.
+		"html.mirrorCursorOnMatchingTag": false,
 		// Controls whether the built-in HTML language support suggests HTML5 tags, properties and
 		// values.
 		"html.suggest.html5": true,
+		// Traces the communication between VS Code and the HTML language server.
+		// possible values: off, messages, verbose
+		"html.trace.server": "off",
 		// Controls whether the built-in HTML language support validates embedded scripts.
 		"html.validate.scripts": true,
 		// Controls whether the built-in HTML language support validates embedded styles.
 		"html.validate.styles": true,
-		"css.customData": [],
-		"css.completion.triggerPropertyValueCompletion": true,
 		"css.completion.completePropertyWithSemicolon": true,
-		"css.validate": true,
+		"css.completion.triggerPropertyValueCompletion": true,
+		"css.customData": [],
+		"css.format.braceStyle": "collapse",
+		"css.format.enable": true,
+		"css.format.maxPreserveNewLines": null,
+		"css.format.newlineBetweenRules": true,
+		"css.format.newlineBetweenSelectors": true,
+		"css.format.preserveNewLines": true,
+		"css.format.spaceAroundSelectorSeparator": false,
+		"css.hover.documentation": true,
+		"css.hover.references": true,
+		"css.lint.argumentsInColorFunction": "error",
+		"css.lint.boxModel": "ignore",
 		"css.lint.compatibleVendorPrefixes": "ignore",
-		"css.lint.vendorPrefix": "warning",
 		"css.lint.duplicateProperties": "ignore",
 		"css.lint.emptyRules": "warning",
-		"css.lint.importStatement": "ignore",
-		"css.lint.boxModel": "ignore",
-		"css.lint.universalSelector": "ignore",
-		"css.lint.zeroUnits": "ignore",
+		"css.lint.float": "ignore",
 		"css.lint.fontFaceProperties": "warning",
 		"css.lint.hexColorLength": "error",
-		"css.lint.argumentsInColorFunction": "error",
-		"css.lint.unknownProperties": "warning",
-		"css.lint.validProperties": [],
-		"css.lint.ieHack": "ignore",
-		"css.lint.unknownVendorSpecificProperties": "ignore",
-		"css.lint.propertyIgnoredDueToDisplay": "warning",
-		"css.lint.important": "ignore",
-		"css.lint.float": "ignore",
 		"css.lint.idSelector": "ignore",
+		"css.lint.ieHack": "ignore",
+		"css.lint.importStatement": "ignore",
+		"css.lint.important": "ignore",
+		"css.lint.propertyIgnoredDueToDisplay": "warning",
+		"css.lint.universalSelector": "ignore",
 		"css.lint.unknownAtRules": "warning",
+		"css.lint.unknownProperties": "warning",
+		"css.lint.unknownVendorSpecificProperties": "ignore",
+		"css.lint.validProperties": [],
+		"css.lint.vendorPrefix": "warning",
+		"css.lint.zeroUnits": "ignore",
+		"css.trace.server": "off",
+		"css.validate": true,
 		"javascript.referencesCodeLens.enabled": false,
 		"javascript.referencesCodeLens.showOnAllFunctions": false,
 		"javascript.suggest.completeFunctionCalls": false,
