@@ -76,7 +76,7 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
             const languageService = await host.getLanguageService(jsDocument);
             const syntaxDiagnostics = languageService.getSyntacticDiagnostics(jsDocument.uri);
             const semanticDiagnostics = languageService.getSemanticDiagnostics(jsDocument.uri);
-            return syntaxDiagnostics.concat(semanticDiagnostics).map((diag) => {
+            return syntaxDiagnostics.concat(semanticDiagnostics).filter(d => d.code !== 1108).map((diag) => {
                 return {
                     range: convertRange(jsDocument, diag),
                     severity: languageModes_1.DiagnosticSeverity.Error,
@@ -340,7 +340,7 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
         async getSemanticTokens(document) {
             const jsDocument = jsDocuments.get(document);
             const jsLanguageService = await host.getLanguageService(jsDocument);
-            return (0, javascriptSemanticTokens_1.getSemanticTokens)(jsLanguageService, jsDocument, jsDocument.uri);
+            return [...(0, javascriptSemanticTokens_1.getSemanticTokens)(jsLanguageService, jsDocument, jsDocument.uri)];
         },
         getSemanticTokenLegend() {
             return (0, javascriptSemanticTokens_1.getSemanticTokenLegend)();

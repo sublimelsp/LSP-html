@@ -50,6 +50,7 @@ function startServer(connection, runtime) {
     let scopedSettingsSupport = false;
     let workspaceFoldersSupport = false;
     let foldingRangeLimit = Number.MAX_VALUE;
+    let formatterMaxNumberOfEdits = Number.MAX_VALUE;
     const customDataRequestService = {
         getContent(uri) {
             return connection.sendRequest(CustomDataContent.type, uri);
@@ -118,6 +119,7 @@ function startServer(connection, runtime) {
         scopedSettingsSupport = getClientCapability('workspace.configuration', false);
         workspaceFoldersSupport = getClientCapability('workspace.workspaceFolders', false);
         foldingRangeLimit = getClientCapability('textDocument.foldingRange.rangeLimit', Number.MAX_VALUE);
+        formatterMaxNumberOfEdits = params.initializationOptions?.customCapabilities?.rangeFormatting?.editLimit || Number.MAX_VALUE;
         const capabilities = {
             textDocumentSync: vscode_languageserver_1.TextDocumentSyncKind.Incremental,
             completionProvider: clientSnippetSupport ? { resolveProvider: true, triggerCharacters: ['.', ':', '<', '"', '=', '/'] } : undefined,
@@ -344,7 +346,12 @@ function startServer(connection, runtime) {
             }
             const unformattedTags = settings && settings.html && settings.html.format && settings.html.format.unformatted || '';
             const enabledModes = { css: !unformattedTags.match(/\bstyle\b/), javascript: !unformattedTags.match(/\bscript\b/) };
-            return (0, formatting_1.format)(languageModes, document, range ?? getFullRange(document), options, settings, enabledModes);
+            const edits = await (0, formatting_1.format)(languageModes, document, range ?? getFullRange(document), options, settings, enabledModes);
+            if (edits.length > formatterMaxNumberOfEdits) {
+                const newText = languageModes_1.TextDocument.applyEdits(document, edits);
+                return [vscode_languageserver_1.TextEdit.replace(getFullRange(document), newText)];
+            }
+            return edits;
         }
         return [];
     }
@@ -456,7 +463,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing rename for ${params.textDocument.uri}`, token);
     });
     connection.languages.onLinkedEditingRange((params, token) => {
-        return (0, runner_1.runSafe)(runtime, async () => {
+        return /* todo remove when microsoft/vscode-languageserver-node#700 fixed */ (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
                 const pos = params.position;
