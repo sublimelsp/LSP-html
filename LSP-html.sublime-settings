@@ -144,8 +144,8 @@
 		"javascript.updateImportsOnFileMove.enabled": "prompt",
 	},
 	// ST4 configuration
-	"selector": "text.html.basic",
-	"feature_selector": "text.html",
+	"selector": "text.html.basic | embedding.php",
+	"feature_selector": "text.html - source.php",
 	// ST3 configuration
 	"languages": [
 		{
