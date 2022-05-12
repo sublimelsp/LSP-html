@@ -6,7 +6,6 @@
 			"css": true,
 			"javascript": true,
 		},
-		"dataPaths": [],
 		"provideFormatter": true,
 	},
 	"settings": {
