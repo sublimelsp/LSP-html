@@ -12,6 +12,7 @@ const arrays_1 = require("./utils/arrays");
 const documentContext_1 = require("./utils/documentContext");
 const vscode_uri_1 = require("vscode-uri");
 const runner_1 = require("./utils/runner");
+const validation_1 = require("./utils/validation");
 const htmlFolding_1 = require("./modes/htmlFolding");
 const customData_1 = require("./customData");
 const selectionRanges_1 = require("./modes/selectionRanges");
@@ -45,6 +46,7 @@ function startServer(connection, runtime) {
     documents.listen(connection);
     let workspaceFolders = [];
     let languageModes;
+    let diagnosticsSupport;
     let clientSnippetSupport = false;
     let dynamicFormatterRegistration = false;
     let scopedSettingsSupport = false;
@@ -78,7 +80,7 @@ function startServer(connection, runtime) {
     // After the server has started the client sends an initialize request. The server receives
     // in the passed params the rootPath of the workspace plus the client capabilities
     connection.onInitialize((params) => {
-        const initializationOptions = params.initializationOptions;
+        const initializationOptions = params.initializationOptions || {};
         workspaceFolders = params.workspaceFolders;
         if (!Array.isArray(workspaceFolders)) {
             workspaceFolders = [];
@@ -119,14 +121,21 @@ function startServer(connection, runtime) {
         scopedSettingsSupport = getClientCapability('workspace.configuration', false);
         workspaceFoldersSupport = getClientCapability('workspace.workspaceFolders', false);
         foldingRangeLimit = getClientCapability('textDocument.foldingRange.rangeLimit', Number.MAX_VALUE);
-        formatterMaxNumberOfEdits = params.initializationOptions?.customCapabilities?.rangeFormatting?.editLimit || Number.MAX_VALUE;
+        formatterMaxNumberOfEdits = initializationOptions?.customCapabilities?.rangeFormatting?.editLimit || Number.MAX_VALUE;
+        const supportsDiagnosticPull = getClientCapability('textDocument.diagnostic', undefined);
+        if (supportsDiagnosticPull === undefined) {
+            diagnosticsSupport = (0, validation_1.registerDiagnosticsPushSupport)(documents, connection, runtime, validateTextDocument);
+        }
+        else {
+            diagnosticsSupport = (0, validation_1.registerDiagnosticsPullSupport)(documents, connection, runtime, validateTextDocument);
+        }
         const capabilities = {
             textDocumentSync: vscode_languageserver_1.TextDocumentSyncKind.Incremental,
             completionProvider: clientSnippetSupport ? { resolveProvider: true, triggerCharacters: ['.', ':', '<', '"', '=', '/'] } : undefined,
             hoverProvider: true,
             documentHighlightProvider: true,
-            documentRangeFormattingProvider: params.initializationOptions?.provideFormatter === true,
-            documentFormattingProvider: params.initializationOptions?.provideFormatter === true,
+            documentRangeFormattingProvider: initializationOptions?.provideFormatter === true,
+            documentFormattingProvider: initializationOptions?.provideFormatter === true,
             documentLinkProvider: { resolveProvider: false },
             documentSymbolProvider: true,
             definitionProvider: true,
@@ -136,7 +145,12 @@ function startServer(connection, runtime) {
             foldingRangeProvider: true,
             selectionRangeProvider: true,
             renameProvider: true,
-            linkedEditingRangeProvider: true
+            linkedEditingRangeProvider: true,
+            diagnosticProvider: {
+                documentSelector: null,
+                interFileDependencies: false,
+                workspaceDiagnostics: false
+            }
         };
         return { capabilities };
     });
@@ -155,7 +169,7 @@ function startServer(connection, runtime) {
                     }
                 }
                 workspaceFolders = updatedFolders.concat(toAdd);
-                documents.all().forEach(triggerValidation);
+                diagnosticsSupport?.requestRefresh();
             });
         }
     });
@@ -164,7 +178,7 @@ function startServer(connection, runtime) {
     connection.onDidChangeConfiguration((change) => {
         globalSettings = change.settings;
         documentSettings = {}; // reset all document settings
-        documents.all().forEach(triggerValidation);
+        diagnosticsSupport?.requestRefresh();
         // dynamically enable & disable the formatter
         if (dynamicFormatterRegistration) {
             const enableFormatter = globalSettings && globalSettings.html && globalSettings.html.format && globalSettings.html.format.enable;
@@ -183,32 +197,6 @@ function startServer(connection, runtime) {
             }
         }
     });
-    const pendingValidationRequests = {};
-    const validationDelayMs = 500;
-    // The content of a text document has changed. This event is emitted
-    // when the text document first opened or when its content has changed.
-    documents.onDidChangeContent(change => {
-        triggerValidation(change.document);
-    });
-    // a document has closed: clear all diagnostics
-    documents.onDidClose(event => {
-        cleanPendingValidation(event.document);
-        connection.sendDiagnostics({ uri: event.document.uri, diagnostics: [] });
-    });
-    function cleanPendingValidation(textDocument) {
-        const request = pendingValidationRequests[textDocument.uri];
-        if (request) {
-            request.dispose();
-            delete pendingValidationRequests[textDocument.uri];
-        }
-    }
-    function triggerValidation(textDocument) {
-        cleanPendingValidation(textDocument);
-        pendingValidationRequests[textDocument.uri] = runtime.timer.setTimeout(() => {
-            delete pendingValidationRequests[textDocument.uri];
-            validateTextDocument(textDocument);
-        }, validationDelayMs);
-    }
     function isValidationEnabled(languageId, settings = globalSettings) {
         const validationSettings = settings && settings.html && settings.html.validate;
         if (validationSettings) {
@@ -230,13 +218,14 @@ function startServer(connection, runtime) {
                             (0, arrays_1.pushAll)(diagnostics, await mode.doValidation(latestTextDocument, settings));
                         }
                     }
-                    connection.sendDiagnostics({ uri: latestTextDocument.uri, diagnostics });
+                    return diagnostics;
                 }
             }
         }
         catch (e) {
             connection.console.error((0, runner_1.formatError)(`Error while validating ${textDocument.uri}`, e));
         }
+        return [];
     }
     connection.onCompletion(async (textDocumentPosition, token) => {
         return (0, runner_1.runSafe)(runtime, async () => {
@@ -249,14 +238,6 @@ function startServer(connection, runtime) {
                 return { isIncomplete: true, items: [] };
             }
             const doComplete = mode.doComplete;
-            if (mode.getId() !== 'html') {
-                /* __GDPR__
-                    "html.embbedded.complete" : {
-                        "languageId" : { "classification": "SystemMetaData", "purpose": "FeatureInsight" }
-                    }
-                 */
-                connection.telemetry.logEvent({ key: 'html.embbedded.complete', value: { languageId: mode.getId() } });
-            }
             const settings = await getDocumentSettings(document, () => doComplete.length > 2);
             const documentContext = (0, documentContext_1.getDocumentContext)(document.uri, workspaceFolders);
             return doComplete(document, textDocumentPosition.position, documentContext, settings);
@@ -265,7 +246,7 @@ function startServer(connection, runtime) {
     connection.onCompletionResolve((item, token) => {
         return (0, runner_1.runSafe)(runtime, async () => {
             const data = item.data;
-            if (data && data.languageId && data.uri) {
+            if ((0, languageModes_1.isCompletionItemData)(data)) {
                 const mode = languageModes.getMode(data.languageId);
                 const document = documents.get(data.uri);
                 if (mode && mode.doResolve && document) {

@@ -25,7 +25,7 @@ function loadLibrary(name) {
             content = (0, fs_1.readFileSync)(libPath).toString();
         }
         catch (e) {
-            console.log(`Unable to load library ${name} at ${libPath}: ${e.message}`);
+            console.log(`Unable to load library ${name} at ${libPath}`);
             content = '';
         }
         contents[name] = content;

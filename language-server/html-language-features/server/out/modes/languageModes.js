@@ -4,7 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLanguageModes = exports.TextDocument = exports.TokenType = exports.ClientCapabilities = exports.TextDocumentIdentifier = exports.SelectionRange = exports.DiagnosticSeverity = exports.ParameterInformation = exports.SignatureInformation = exports.WorkspaceEdit = exports.ColorPresentation = exports.ColorInformation = exports.Color = exports.TextEdit = exports.SymbolKind = exports.SymbolInformation = exports.Range = exports.Position = exports.Location = exports.Hover = exports.FormattingOptions = exports.FoldingRangeKind = exports.FoldingRange = exports.DocumentLink = exports.DocumentHighlightKind = exports.DocumentHighlight = exports.Diagnostic = exports.CompletionItemKind = exports.CompletionList = exports.CompletionItem = void 0;
+exports.getLanguageModes = exports.isCompletionItemData = exports.TextDocument = exports.TokenType = exports.ClientCapabilities = exports.TextDocumentIdentifier = exports.SelectionRange = exports.DiagnosticSeverity = exports.ParameterInformation = exports.SignatureInformation = exports.WorkspaceEdit = exports.ColorPresentation = exports.ColorInformation = exports.Color = exports.TextEdit = exports.SymbolKind = exports.SymbolInformation = exports.Range = exports.Position = exports.Location = exports.Hover = exports.FormattingOptions = exports.FoldingRangeKind = exports.FoldingRange = exports.DocumentLink = exports.DocumentHighlightKind = exports.DocumentHighlight = exports.Diagnostic = exports.CompletionItemKind = exports.CompletionList = exports.CompletionItem = exports.WorkspaceFolder = void 0;
 const vscode_css_languageservice_1 = require("vscode-css-languageservice");
 const vscode_html_languageservice_1 = require("vscode-html-languageservice");
 const languageModelCache_1 = require("../languageModelCache");
@@ -13,6 +13,7 @@ const embeddedSupport_1 = require("./embeddedSupport");
 const htmlMode_1 = require("./htmlMode");
 const javascriptMode_1 = require("./javascriptMode");
 var vscode_languageserver_1 = require("vscode-languageserver");
+Object.defineProperty(exports, "WorkspaceFolder", { enumerable: true, get: function () { return vscode_languageserver_1.WorkspaceFolder; } });
 Object.defineProperty(exports, "CompletionItem", { enumerable: true, get: function () { return vscode_languageserver_1.CompletionItem; } });
 Object.defineProperty(exports, "CompletionList", { enumerable: true, get: function () { return vscode_languageserver_1.CompletionList; } });
 Object.defineProperty(exports, "CompletionItemKind", { enumerable: true, get: function () { return vscode_languageserver_1.CompletionItemKind; } });
@@ -44,6 +45,10 @@ Object.defineProperty(exports, "ClientCapabilities", { enumerable: true, get: fu
 Object.defineProperty(exports, "TokenType", { enumerable: true, get: function () { return vscode_html_languageservice_2.TokenType; } });
 var vscode_languageserver_textdocument_1 = require("vscode-languageserver-textdocument");
 Object.defineProperty(exports, "TextDocument", { enumerable: true, get: function () { return vscode_languageserver_textdocument_1.TextDocument; } });
+function isCompletionItemData(value) {
+    return value && typeof value.languageId === 'string' && typeof value.uri === 'string' && typeof value.offset === 'number';
+}
+exports.isCompletionItemData = isCompletionItemData;
 function getLanguageModes(supportedLanguages, workspace, clientCapabilities, requestService) {
     const htmlLanguageService = (0, vscode_html_languageservice_1.getLanguageService)({ clientCapabilities, fileSystemProvider: requestService });
     const cssLanguageService = (0, vscode_css_languageservice_1.getCSSLanguageService)({ clientCapabilities, fileSystemProvider: requestService });

@@ -12,7 +12,7 @@ const ts = require("typescript");
 const javascriptSemanticTokens_1 = require("./javascriptSemanticTokens");
 const JS_WORD_REGEX = /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g;
 function getLanguageServiceHost(scriptKind) {
-    const compilerOptions = { allowNonTsExtensions: true, allowJs: true, lib: ['lib.es6.d.ts'], target: ts.ScriptTarget.Latest, moduleResolution: ts.ModuleResolutionKind.Classic, experimentalDecorators: false };
+    const compilerOptions = { allowNonTsExtensions: true, allowJs: true, lib: ['lib.es2020.full.d.ts'], target: ts.ScriptTarget.Latest, moduleResolution: ts.ModuleResolutionKind.Classic, experimentalDecorators: false };
     let currentTextDocument = languageModes_1.TextDocument.create('init', 'javascript', 1, '');
     const jsLanguageService = Promise.resolve().then(() => require(/* webpackChunkName: "javascriptLibs" */ './javascriptLibs')).then(libs => {
         const host = {
@@ -45,7 +45,31 @@ function getLanguageServiceHost(scriptKind) {
                 };
             },
             getCurrentDirectory: () => '',
-            getDefaultLibFileName: (_options) => 'es6'
+            getDefaultLibFileName: (_options) => 'es2020.full',
+            readFile: (path, _encoding) => {
+                if (path === currentTextDocument.uri) {
+                    return currentTextDocument.getText();
+                }
+                else {
+                    return libs.loadLibrary(path);
+                }
+            },
+            fileExists: (path) => {
+                if (path === currentTextDocument.uri) {
+                    return true;
+                }
+                else {
+                    return !!libs.loadLibrary(path);
+                }
+            },
+            directoryExists: (path) => {
+                // typescript tries to first find libraries in node_modules/@types and node_modules/@typescript
+                // there's no node_modules in our setup
+                if (path.startsWith('node_modules')) {
+                    return false;
+                }
+                return true;
+            }
         };
         return ts.createLanguageService(host);
     });
@@ -97,6 +121,11 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
             return {
                 isIncomplete: false,
                 items: completions.entries.map(entry => {
+                    const data = {
+                        languageId,
+                        uri: document.uri,
+                        offset: offset
+                    };
                     return {
                         uri: document.uri,
                         position: position,
@@ -104,23 +133,21 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
                         sortText: entry.sortText,
                         kind: convertKind(entry.kind),
                         textEdit: languageModes_1.TextEdit.replace(replaceRange, entry.name),
-                        data: {
-                            languageId,
-                            uri: document.uri,
-                            offset: offset
-                        }
+                        data
                     };
                 })
             };
         },
         async doResolve(document, item) {
-            const jsDocument = jsDocuments.get(document);
-            const jsLanguageService = await host.getLanguageService(jsDocument);
-            let details = jsLanguageService.getCompletionEntryDetails(jsDocument.uri, item.data.offset, item.label, undefined, undefined, undefined, undefined);
-            if (details) {
-                item.detail = ts.displayPartsToString(details.displayParts);
-                item.documentation = ts.displayPartsToString(details.documentation);
-                delete item.data;
+            if ((0, languageModes_1.isCompletionItemData)(item.data)) {
+                const jsDocument = jsDocuments.get(document);
+                const jsLanguageService = await host.getLanguageService(jsDocument);
+                let details = jsLanguageService.getCompletionEntryDetails(jsDocument.uri, item.data.offset, item.label, undefined, undefined, undefined, undefined);
+                if (details) {
+                    item.detail = ts.displayPartsToString(details.displayParts);
+                    item.documentation = ts.displayPartsToString(details.documentation);
+                    delete item.data;
+                }
             }
             return item;
         },
@@ -363,47 +390,47 @@ function convertRange(document, span) {
 }
 function convertKind(kind) {
     switch (kind) {
-        case "primitive type" /* primitiveType */:
-        case "keyword" /* keyword */:
+        case "primitive type" /* Kind.primitiveType */:
+        case "keyword" /* Kind.keyword */:
             return languageModes_1.CompletionItemKind.Keyword;
-        case "const" /* const */:
-        case "let" /* let */:
-        case "var" /* variable */:
-        case "local var" /* localVariable */:
-        case "alias" /* alias */:
-        case "parameter" /* parameter */:
+        case "const" /* Kind.const */:
+        case "let" /* Kind.let */:
+        case "var" /* Kind.variable */:
+        case "local var" /* Kind.localVariable */:
+        case "alias" /* Kind.alias */:
+        case "parameter" /* Kind.parameter */:
             return languageModes_1.CompletionItemKind.Variable;
-        case "property" /* memberVariable */:
-        case "getter" /* memberGetAccessor */:
-        case "setter" /* memberSetAccessor */:
+        case "property" /* Kind.memberVariable */:
+        case "getter" /* Kind.memberGetAccessor */:
+        case "setter" /* Kind.memberSetAccessor */:
             return languageModes_1.CompletionItemKind.Field;
-        case "function" /* function */:
-        case "local function" /* localFunction */:
+        case "function" /* Kind.function */:
+        case "local function" /* Kind.localFunction */:
             return languageModes_1.CompletionItemKind.Function;
-        case "method" /* method */:
-        case "construct" /* constructSignature */:
-        case "call" /* callSignature */:
-        case "index" /* indexSignature */:
+        case "method" /* Kind.method */:
+        case "construct" /* Kind.constructSignature */:
+        case "call" /* Kind.callSignature */:
+        case "index" /* Kind.indexSignature */:
             return languageModes_1.CompletionItemKind.Method;
-        case "enum" /* enum */:
+        case "enum" /* Kind.enum */:
             return languageModes_1.CompletionItemKind.Enum;
-        case "enum member" /* enumMember */:
+        case "enum member" /* Kind.enumMember */:
             return languageModes_1.CompletionItemKind.EnumMember;
-        case "module" /* module */:
-        case "external module name" /* externalModuleName */:
+        case "module" /* Kind.module */:
+        case "external module name" /* Kind.externalModuleName */:
             return languageModes_1.CompletionItemKind.Module;
-        case "class" /* class */:
-        case "type" /* type */:
+        case "class" /* Kind.class */:
+        case "type" /* Kind.type */:
             return languageModes_1.CompletionItemKind.Class;
-        case "interface" /* interface */:
+        case "interface" /* Kind.interface */:
             return languageModes_1.CompletionItemKind.Interface;
-        case "warning" /* warning */:
+        case "warning" /* Kind.warning */:
             return languageModes_1.CompletionItemKind.Text;
-        case "script" /* script */:
+        case "script" /* Kind.script */:
             return languageModes_1.CompletionItemKind.File;
-        case "directory" /* directory */:
+        case "directory" /* Kind.directory */:
             return languageModes_1.CompletionItemKind.Folder;
-        case "string" /* string */:
+        case "string" /* Kind.string */:
             return languageModes_1.CompletionItemKind.Constant;
         default:
             return languageModes_1.CompletionItemKind.Property;
@@ -411,28 +438,28 @@ function convertKind(kind) {
 }
 function convertSymbolKind(kind) {
     switch (kind) {
-        case "module" /* module */: return languageModes_1.SymbolKind.Module;
-        case "class" /* class */: return languageModes_1.SymbolKind.Class;
-        case "enum" /* enum */: return languageModes_1.SymbolKind.Enum;
-        case "enum member" /* enumMember */: return languageModes_1.SymbolKind.EnumMember;
-        case "interface" /* interface */: return languageModes_1.SymbolKind.Interface;
-        case "index" /* indexSignature */: return languageModes_1.SymbolKind.Method;
-        case "call" /* callSignature */: return languageModes_1.SymbolKind.Method;
-        case "method" /* method */: return languageModes_1.SymbolKind.Method;
-        case "property" /* memberVariable */: return languageModes_1.SymbolKind.Property;
-        case "getter" /* memberGetAccessor */: return languageModes_1.SymbolKind.Property;
-        case "setter" /* memberSetAccessor */: return languageModes_1.SymbolKind.Property;
-        case "var" /* variable */: return languageModes_1.SymbolKind.Variable;
-        case "let" /* let */: return languageModes_1.SymbolKind.Variable;
-        case "const" /* const */: return languageModes_1.SymbolKind.Variable;
-        case "local var" /* localVariable */: return languageModes_1.SymbolKind.Variable;
-        case "alias" /* alias */: return languageModes_1.SymbolKind.Variable;
-        case "function" /* function */: return languageModes_1.SymbolKind.Function;
-        case "local function" /* localFunction */: return languageModes_1.SymbolKind.Function;
-        case "construct" /* constructSignature */: return languageModes_1.SymbolKind.Constructor;
-        case "constructor" /* constructorImplementation */: return languageModes_1.SymbolKind.Constructor;
-        case "type parameter" /* typeParameter */: return languageModes_1.SymbolKind.TypeParameter;
-        case "string" /* string */: return languageModes_1.SymbolKind.String;
+        case "module" /* Kind.module */: return languageModes_1.SymbolKind.Module;
+        case "class" /* Kind.class */: return languageModes_1.SymbolKind.Class;
+        case "enum" /* Kind.enum */: return languageModes_1.SymbolKind.Enum;
+        case "enum member" /* Kind.enumMember */: return languageModes_1.SymbolKind.EnumMember;
+        case "interface" /* Kind.interface */: return languageModes_1.SymbolKind.Interface;
+        case "index" /* Kind.indexSignature */: return languageModes_1.SymbolKind.Method;
+        case "call" /* Kind.callSignature */: return languageModes_1.SymbolKind.Method;
+        case "method" /* Kind.method */: return languageModes_1.SymbolKind.Method;
+        case "property" /* Kind.memberVariable */: return languageModes_1.SymbolKind.Property;
+        case "getter" /* Kind.memberGetAccessor */: return languageModes_1.SymbolKind.Property;
+        case "setter" /* Kind.memberSetAccessor */: return languageModes_1.SymbolKind.Property;
+        case "var" /* Kind.variable */: return languageModes_1.SymbolKind.Variable;
+        case "let" /* Kind.let */: return languageModes_1.SymbolKind.Variable;
+        case "const" /* Kind.const */: return languageModes_1.SymbolKind.Variable;
+        case "local var" /* Kind.localVariable */: return languageModes_1.SymbolKind.Variable;
+        case "alias" /* Kind.alias */: return languageModes_1.SymbolKind.Variable;
+        case "function" /* Kind.function */: return languageModes_1.SymbolKind.Function;
+        case "local function" /* Kind.localFunction */: return languageModes_1.SymbolKind.Function;
+        case "construct" /* Kind.constructSignature */: return languageModes_1.SymbolKind.Constructor;
+        case "constructor" /* Kind.constructorImplementation */: return languageModes_1.SymbolKind.Constructor;
+        case "type parameter" /* Kind.typeParameter */: return languageModes_1.SymbolKind.TypeParameter;
+        case "string" /* Kind.string */: return languageModes_1.SymbolKind.String;
         default: return languageModes_1.SymbolKind.Variable;
     }
 }
