@@ -40,7 +40,7 @@ function _divideAndMerge(data, compare) {
     let rightIdx = 0;
     let i = 0;
     while (leftIdx < left.length && rightIdx < right.length) {
-        let ret = compare(left[leftIdx], right[rightIdx]);
+        const ret = compare(left[leftIdx], right[rightIdx]);
         if (ret <= 0) {
             // smaller_equal -> take left to preserve order
             data[i++] = left[leftIdx++];
@@ -60,8 +60,8 @@ function _divideAndMerge(data, compare) {
 function binarySearch(array, key, comparator) {
     let low = 0, high = array.length - 1;
     while (low <= high) {
-        let mid = ((low + high) / 2) | 0;
-        let comp = comparator(array[mid], key);
+        const mid = ((low + high) / 2) | 0;
+        const comp = comparator(array[mid], key);
         if (comp < 0) {
             low = mid + 1;
         }

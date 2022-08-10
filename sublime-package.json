@@ -68,11 +68,6 @@
                       "description": "Enable/disable default HTML formatter.",
                       "type": "boolean"
                     },
-                    "html.format.endWithNewline": {
-                      "default": false,
-                      "description": "End with a newline.",
-                      "type": "boolean"
-                    },
                     "html.format.extraLiners": {
                       "default": "head, body, /html",
                       "markdownDescription": "List of tags, comma separated, that should have an extra newline before them. `null` defaults to `\"head, body, /html\"`.",

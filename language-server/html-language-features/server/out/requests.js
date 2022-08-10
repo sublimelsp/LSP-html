@@ -126,7 +126,7 @@ exports.normalizePath = normalizePath;
 function joinPath(uriString, ...paths) {
     const uri = vscode_uri_1.URI.parse(uriString);
     const parts = uri.path.split('/');
-    for (let path of paths) {
+    for (const path of paths) {
         parts.push(...path.split('/'));
     }
     return uri.with({ path: normalizePath(parts) }).toString();

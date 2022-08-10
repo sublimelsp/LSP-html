@@ -10,10 +10,10 @@ function getWordAtText(text, offset, wordDefinition) {
     while (lineStart > 0 && !isNewlineCharacter(text.charCodeAt(lineStart - 1))) {
         lineStart--;
     }
-    let offsetInLine = offset - lineStart;
-    let lineText = text.substr(lineStart);
+    const offsetInLine = offset - lineStart;
+    const lineText = text.substr(lineStart);
     // make a copy of the regex as to not keep the state
-    let flags = wordDefinition.ignoreCase ? 'gi' : 'g';
+    const flags = wordDefinition.ignoreCase ? 'gi' : 'g';
     wordDefinition = new RegExp(wordDefinition.source, flags);
     let match = wordDefinition.exec(lineText);
     while (match && match.index + match[0].length < offsetInLine) {
@@ -38,7 +38,7 @@ function startsWith(haystack, needle) {
 }
 exports.startsWith = startsWith;
 function endsWith(haystack, needle) {
-    let diff = haystack.length - needle.length;
+    const diff = haystack.length - needle.length;
     if (diff > 0) {
         return haystack.indexOf(needle, diff) === diff;
     }

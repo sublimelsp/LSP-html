@@ -29,8 +29,6 @@
 		"html.format.contentUnformatted": "pre,code,textarea",
 		// Enable/disable default HTML formatter.
 		"html.format.enable": true,
-		// End with a newline.
-		"html.format.endWithNewline": false,
 		// List of tags, comma separated, that should have an extra newline before them. `null`
 		// defaults to `"head, body, /html"`.
 		"html.format.extraLiners": "head, body, /html",

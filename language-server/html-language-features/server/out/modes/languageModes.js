@@ -52,7 +52,7 @@ exports.isCompletionItemData = isCompletionItemData;
 function getLanguageModes(supportedLanguages, workspace, clientCapabilities, requestService) {
     const htmlLanguageService = (0, vscode_html_languageservice_1.getLanguageService)({ clientCapabilities, fileSystemProvider: requestService });
     const cssLanguageService = (0, vscode_css_languageservice_1.getCSSLanguageService)({ clientCapabilities, fileSystemProvider: requestService });
-    let documentRegions = (0, languageModelCache_1.getLanguageModelCache)(10, 60, document => (0, embeddedSupport_1.getDocumentRegions)(htmlLanguageService, document));
+    const documentRegions = (0, languageModelCache_1.getLanguageModelCache)(10, 60, document => (0, embeddedSupport_1.getDocumentRegions)(htmlLanguageService, document));
     let modelCaches = [];
     modelCaches.push(documentRegions);
     let modes = Object.create(null);
@@ -69,7 +69,7 @@ function getLanguageModes(supportedLanguages, workspace, clientCapabilities, req
             htmlLanguageService.setDataProviders(true, dataProviders);
         },
         getModeAtPosition(document, position) {
-            let languageId = documentRegions.get(document).getLanguageAtPosition(position);
+            const languageId = documentRegions.get(document).getLanguageAtPosition(position);
             if (languageId) {
                 return modes[languageId];
             }
@@ -86,9 +86,9 @@ function getLanguageModes(supportedLanguages, workspace, clientCapabilities, req
             });
         },
         getAllModesInDocument(document) {
-            let result = [];
-            for (let languageId of documentRegions.get(document).getLanguagesInDocument()) {
-                let mode = modes[languageId];
+            const result = [];
+            for (const languageId of documentRegions.get(document).getLanguagesInDocument()) {
+                const mode = modes[languageId];
                 if (mode) {
                     result.push(mode);
                 }
@@ -96,9 +96,9 @@ function getLanguageModes(supportedLanguages, workspace, clientCapabilities, req
             return result;
         },
         getAllModes() {
-            let result = [];
-            for (let languageId in modes) {
-                let mode = modes[languageId];
+            const result = [];
+            for (const languageId in modes) {
+                const mode = modes[languageId];
                 if (mode) {
                     result.push(mode);
                 }
@@ -110,14 +110,14 @@ function getLanguageModes(supportedLanguages, workspace, clientCapabilities, req
         },
         onDocumentRemoved(document) {
             modelCaches.forEach(mc => mc.onDocumentRemoved(document));
-            for (let mode in modes) {
+            for (const mode in modes) {
                 modes[mode].onDocumentRemoved(document);
             }
         },
         dispose() {
             modelCaches.forEach(mc => mc.dispose());
             modelCaches = [];
-            for (let mode in modes) {
+            for (const mode in modes) {
                 modes[mode].dispose();
             }
             modes = {};

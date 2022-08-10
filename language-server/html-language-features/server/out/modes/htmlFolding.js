@@ -7,15 +7,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFoldingRanges = void 0;
 const languageModes_1 = require("./languageModes");
 async function getFoldingRanges(languageModes, document, maxRanges, _cancellationToken) {
-    let htmlMode = languageModes.getMode('html');
-    let range = languageModes_1.Range.create(languageModes_1.Position.create(0, 0), languageModes_1.Position.create(document.lineCount, 0));
+    const htmlMode = languageModes.getMode('html');
+    const range = languageModes_1.Range.create(languageModes_1.Position.create(0, 0), languageModes_1.Position.create(document.lineCount, 0));
     let result = [];
     if (htmlMode && htmlMode.getFoldingRanges) {
         result.push(...await htmlMode.getFoldingRanges(document));
     }
     // cache folding ranges per mode
-    let rangesPerMode = Object.create(null);
-    let getRangesForMode = async (mode) => {
+    const rangesPerMode = Object.create(null);
+    const getRangesForMode = async (mode) => {
         if (mode.getFoldingRanges) {
             let ranges = rangesPerMode[mode.getId()];
             if (!Array.isArray(ranges)) {
@@ -26,9 +26,9 @@ async function getFoldingRanges(languageModes, document, maxRanges, _cancellatio
         }
         return [];
     };
-    let modeRanges = languageModes.getModesInRange(document, range);
-    for (let modeRange of modeRanges) {
-        let mode = modeRange.mode;
+    const modeRanges = languageModes.getModesInRange(document, range);
+    for (const modeRange of modeRanges) {
+        const mode = modeRange.mode;
         if (mode && mode !== htmlMode && !modeRange.attributeValue) {
             const ranges = await getRangesForMode(mode);
             result.push(...ranges.filter(r => r.startLine >= modeRange.start.line && r.endLine < modeRange.end.line));
@@ -51,10 +51,10 @@ function limitRanges(ranges, maxRanges) {
     // compute each range's nesting level in 'nestingLevels'.
     // count the number of ranges for each level in 'nestingLevelCounts'
     let top = undefined;
-    let previous = [];
-    let nestingLevels = [];
-    let nestingLevelCounts = [];
-    let setNestingLevel = (index, level) => {
+    const previous = [];
+    const nestingLevels = [];
+    const nestingLevelCounts = [];
+    const setNestingLevel = (index, level) => {
         nestingLevels[index] = level;
         if (level < 30) {
             nestingLevelCounts[level] = (nestingLevelCounts[level] || 0) + 1;
@@ -62,7 +62,7 @@ function limitRanges(ranges, maxRanges) {
     };
     // compute nesting levels and sanitize
     for (let i = 0; i < ranges.length; i++) {
-        let entry = ranges[i];
+        const entry = ranges[i];
         if (!top) {
             top = entry;
             setNestingLevel(i, 0);
@@ -90,7 +90,7 @@ function limitRanges(ranges, maxRanges) {
     let entries = 0;
     let maxLevel = 0;
     for (let i = 0; i < nestingLevelCounts.length; i++) {
-        let n = nestingLevelCounts[i];
+        const n = nestingLevelCounts[i];
         if (n) {
             if (n + entries > maxRanges) {
                 maxLevel = i;
@@ -99,9 +99,9 @@ function limitRanges(ranges, maxRanges) {
             entries += n;
         }
     }
-    let result = [];
+    const result = [];
     for (let i = 0; i < ranges.length; i++) {
-        let level = nestingLevels[i];
+        const level = nestingLevels[i];
         if (typeof level === 'number') {
             if (level < maxLevel || (level === maxLevel && entries++ < maxRanges)) {
                 result.push(ranges[i]);

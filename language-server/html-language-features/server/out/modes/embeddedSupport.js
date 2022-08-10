@@ -8,12 +8,12 @@ exports.getDocumentRegions = exports.CSS_STYLE_RULE = void 0;
 const languageModes_1 = require("./languageModes");
 exports.CSS_STYLE_RULE = '__';
 function getDocumentRegions(languageService, document) {
-    let regions = [];
-    let scanner = languageService.createScanner(document.getText());
+    const regions = [];
+    const scanner = languageService.createScanner(document.getText());
     let lastTagName = '';
     let lastAttributeName = null;
     let languageIdFromType = undefined;
-    let importedScripts = [];
+    const importedScripts = [];
     let token = scanner.scan();
     while (token !== languageModes_1.TokenType.EOS) {
         switch (token) {
@@ -51,11 +51,11 @@ function getDocumentRegions(languageService, document) {
                     }
                 }
                 else {
-                    let attributeLanguageId = getAttributeLanguage(lastAttributeName);
+                    const attributeLanguageId = getAttributeLanguage(lastAttributeName);
                     if (attributeLanguageId) {
                         let start = scanner.getTokenOffset();
                         let end = scanner.getTokenEnd();
-                        let firstChar = document.getText()[start];
+                        const firstChar = document.getText()[start];
                         if (firstChar === '\'' || firstChar === '"') {
                             start++;
                             end--;
@@ -78,14 +78,14 @@ function getDocumentRegions(languageService, document) {
 }
 exports.getDocumentRegions = getDocumentRegions;
 function getLanguageRanges(document, regions, range) {
-    let result = [];
+    const result = [];
     let currentPos = range ? range.start : languageModes_1.Position.create(0, 0);
     let currentOffset = range ? document.offsetAt(range.start) : 0;
-    let endOffset = range ? document.offsetAt(range.end) : document.getText().length;
-    for (let region of regions) {
+    const endOffset = range ? document.offsetAt(range.end) : document.getText().length;
+    for (const region of regions) {
         if (region.end > currentOffset && region.start < endOffset) {
-            let start = Math.max(region.start, currentOffset);
-            let startPos = document.positionAt(start);
+            const start = Math.max(region.start, currentOffset);
+            const startPos = document.positionAt(start);
             if (currentOffset < region.start) {
                 result.push({
                     start: currentPos,
@@ -93,8 +93,8 @@ function getLanguageRanges(document, regions, range) {
                     languageId: 'html'
                 });
             }
-            let end = Math.min(region.end, endOffset);
-            let endPos = document.positionAt(end);
+            const end = Math.min(region.end, endOffset);
+            const endPos = document.positionAt(end);
             if (end > region.start) {
                 result.push({
                     start: startPos,
@@ -108,7 +108,7 @@ function getLanguageRanges(document, regions, range) {
         }
     }
     if (currentOffset < endOffset) {
-        let endPos = range ? range.end : document.positionAt(endOffset);
+        const endPos = range ? range.end : document.positionAt(endOffset);
         result.push({
             start: currentPos,
             end: endPos,
@@ -118,8 +118,8 @@ function getLanguageRanges(document, regions, range) {
     return result;
 }
 function getLanguagesInDocument(_document, regions) {
-    let result = [];
-    for (let region of regions) {
+    const result = [];
+    for (const region of regions) {
         if (region.languageId && result.indexOf(region.languageId) === -1) {
             result.push(region.languageId);
             if (result.length === 3) {
@@ -131,8 +131,8 @@ function getLanguagesInDocument(_document, regions) {
     return result;
 }
 function getLanguageAtPosition(document, regions, position) {
-    let offset = document.offsetAt(position);
-    for (let region of regions) {
+    const offset = document.offsetAt(position);
+    for (const region of regions) {
         if (region.start <= offset) {
             if (offset <= region.end) {
                 return region.languageId;
@@ -146,10 +146,10 @@ function getLanguageAtPosition(document, regions, position) {
 }
 function getEmbeddedDocument(document, contents, languageId, ignoreAttributeValues) {
     let currentPos = 0;
-    let oldContent = document.getText();
+    const oldContent = document.getText();
     let result = '';
     let lastSuffix = '';
-    for (let c of contents) {
+    for (const c of contents) {
         if (c.languageId === languageId && (!ignoreAttributeValues || !c.attributeValue)) {
             result = substituteWithWhitespace(result, currentPos, c.start, oldContent, lastSuffix, getPrefix(c));
             result += oldContent.substring(c.start, c.end);
@@ -181,7 +181,7 @@ function substituteWithWhitespace(result, start, end, oldContent, before, after)
     let accumulatedWS = 0;
     result += before;
     for (let i = start + before.length; i < end; i++) {
-        let ch = oldContent[i];
+        const ch = oldContent[i];
         if (ch === '\n' || ch === '\r') {
             // only write new lines, skip the whitespace
             accumulatedWS = 0;
@@ -206,7 +206,7 @@ function append(result, str, n) {
     return result;
 }
 function getAttributeLanguage(attributeName) {
-    let match = attributeName.match(/^(style)$|^(on\w+)$/i);
+    const match = attributeName.match(/^(style)$|^(on\w+)$/i);
     if (!match) {
         return null;
     }

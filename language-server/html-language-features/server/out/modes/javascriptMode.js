@@ -86,10 +86,14 @@ function getLanguageServiceHost(scriptKind) {
         }
     };
 }
+const ignoredErrors = [
+    1108,
+    2792, /* Cannot_find_module_0_Did_you_mean_to_set_the_moduleResolution_option_to_node_or_to_add_aliases_to_the_paths_option */
+];
 function getJavaScriptMode(documentRegions, languageId, workspace) {
-    let jsDocuments = (0, languageModelCache_1.getLanguageModelCache)(10, 60, document => documentRegions.get(document).getEmbeddedDocument(languageId));
+    const jsDocuments = (0, languageModelCache_1.getLanguageModelCache)(10, 60, document => documentRegions.get(document).getEmbeddedDocument(languageId));
     const host = getLanguageServiceHost(languageId === 'javascript' ? ts.ScriptKind.JS : ts.ScriptKind.TS);
-    let globalSettings = {};
+    const globalSettings = {};
     return {
         getId() {
             return languageId;
@@ -100,7 +104,7 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
             const languageService = await host.getLanguageService(jsDocument);
             const syntaxDiagnostics = languageService.getSyntacticDiagnostics(jsDocument.uri);
             const semanticDiagnostics = languageService.getSemanticDiagnostics(jsDocument.uri);
-            return syntaxDiagnostics.concat(semanticDiagnostics).filter(d => d.code !== 1108).map((diag) => {
+            return syntaxDiagnostics.concat(semanticDiagnostics).filter(d => !ignoredErrors.includes(d.code)).map((diag) => {
                 return {
                     range: convertRange(jsDocument, diag),
                     severity: languageModes_1.DiagnosticSeverity.Error,
@@ -112,12 +116,12 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
         async doComplete(document, position, _documentContext) {
             const jsDocument = jsDocuments.get(document);
             const jsLanguageService = await host.getLanguageService(jsDocument);
-            let offset = jsDocument.offsetAt(position);
-            let completions = jsLanguageService.getCompletionsAtPosition(jsDocument.uri, offset, { includeExternalModuleExports: false, includeInsertTextCompletions: false });
+            const offset = jsDocument.offsetAt(position);
+            const completions = jsLanguageService.getCompletionsAtPosition(jsDocument.uri, offset, { includeExternalModuleExports: false, includeInsertTextCompletions: false });
             if (!completions) {
                 return { isIncomplete: false, items: [] };
             }
-            let replaceRange = convertRange(jsDocument, (0, strings_1.getWordAtText)(jsDocument.getText(), offset, JS_WORD_REGEX));
+            const replaceRange = convertRange(jsDocument, (0, strings_1.getWordAtText)(jsDocument.getText(), offset, JS_WORD_REGEX));
             return {
                 isIncomplete: false,
                 items: completions.entries.map(entry => {
@@ -142,7 +146,7 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
             if ((0, languageModes_1.isCompletionItemData)(item.data)) {
                 const jsDocument = jsDocuments.get(document);
                 const jsLanguageService = await host.getLanguageService(jsDocument);
-                let details = jsLanguageService.getCompletionEntryDetails(jsDocument.uri, item.data.offset, item.label, undefined, undefined, undefined, undefined);
+                const details = jsLanguageService.getCompletionEntryDetails(jsDocument.uri, item.data.offset, item.label, undefined, undefined, undefined, undefined);
                 if (details) {
                     item.detail = ts.displayPartsToString(details.displayParts);
                     item.documentation = ts.displayPartsToString(details.documentation);
@@ -154,7 +158,7 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
         async doHover(document, position) {
             const jsDocument = jsDocuments.get(document);
             const jsLanguageService = await host.getLanguageService(jsDocument);
-            let info = jsLanguageService.getQuickInfoAtPosition(jsDocument.uri, jsDocument.offsetAt(position));
+            const info = jsLanguageService.getQuickInfoAtPosition(jsDocument.uri, jsDocument.offsetAt(position));
             if (info) {
                 const contents = ts.displayPartsToString(info.displayParts);
                 return {
@@ -167,23 +171,23 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
         async doSignatureHelp(document, position) {
             const jsDocument = jsDocuments.get(document);
             const jsLanguageService = await host.getLanguageService(jsDocument);
-            let signHelp = jsLanguageService.getSignatureHelpItems(jsDocument.uri, jsDocument.offsetAt(position), undefined);
+            const signHelp = jsLanguageService.getSignatureHelpItems(jsDocument.uri, jsDocument.offsetAt(position), undefined);
             if (signHelp) {
-                let ret = {
+                const ret = {
                     activeSignature: signHelp.selectedItemIndex,
                     activeParameter: signHelp.argumentIndex,
                     signatures: []
                 };
                 signHelp.items.forEach(item => {
-                    let signature = {
+                    const signature = {
                         label: '',
                         documentation: undefined,
                         parameters: []
                     };
                     signature.label += ts.displayPartsToString(item.prefixDisplayParts);
                     item.parameters.forEach((p, i, a) => {
-                        let label = ts.displayPartsToString(p.displayParts);
-                        let parameter = {
+                        const label = ts.displayPartsToString(p.displayParts);
+                        const parameter = {
                             label: label,
                             documentation: ts.displayPartsToString(p.documentation)
                         };
@@ -238,14 +242,14 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
         async findDocumentSymbols(document) {
             const jsDocument = jsDocuments.get(document);
             const jsLanguageService = await host.getLanguageService(jsDocument);
-            let items = jsLanguageService.getNavigationBarItems(jsDocument.uri);
+            const items = jsLanguageService.getNavigationBarItems(jsDocument.uri);
             if (items) {
-                let result = [];
-                let existing = Object.create(null);
-                let collectSymbols = (item, containerLabel) => {
-                    let sig = item.text + item.kind + item.spans[0].start;
+                const result = [];
+                const existing = Object.create(null);
+                const collectSymbols = (item, containerLabel) => {
+                    const sig = item.text + item.kind + item.spans[0].start;
                     if (item.kind !== 'script' && !existing[sig]) {
-                        let symbol = {
+                        const symbol = {
                             name: item.text,
                             kind: convertSymbolKind(item.kind),
                             location: {
@@ -259,7 +263,7 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
                         containerLabel = item.text;
                     }
                     if (item.childItems && item.childItems.length > 0) {
-                        for (let child of item.childItems) {
+                        for (const child of item.childItems) {
                             collectSymbols(child, containerLabel);
                         }
                     }
@@ -272,7 +276,7 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
         async findDefinition(document, position) {
             const jsDocument = jsDocuments.get(document);
             const jsLanguageService = await host.getLanguageService(jsDocument);
-            let definition = jsLanguageService.getDefinitionAtPosition(jsDocument.uri, jsDocument.offsetAt(position));
+            const definition = jsLanguageService.getDefinitionAtPosition(jsDocument.uri, jsDocument.offsetAt(position));
             if (definition) {
                 return definition.filter(d => d.fileName === jsDocument.uri).map(d => {
                     return {
@@ -286,7 +290,7 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
         async findReferences(document, position) {
             const jsDocument = jsDocuments.get(document);
             const jsLanguageService = await host.getLanguageService(jsDocument);
-            let references = jsLanguageService.getReferencesAtPosition(jsDocument.uri, jsDocument.offsetAt(position));
+            const references = jsLanguageService.getReferencesAtPosition(jsDocument.uri, jsDocument.offsetAt(position));
             if (references) {
                 return references.filter(d => d.fileName === jsDocument.uri).map(d => {
                     return {
@@ -310,20 +314,20 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
         async format(document, range, formatParams, settings = globalSettings) {
             const jsDocument = documentRegions.get(document).getEmbeddedDocument('javascript', true);
             const jsLanguageService = await host.getLanguageService(jsDocument);
-            let formatterSettings = settings && settings.javascript && settings.javascript.format;
-            let initialIndentLevel = computeInitialIndent(document, range, formatParams);
-            let formatSettings = convertOptions(formatParams, formatterSettings, initialIndentLevel + 1);
-            let start = jsDocument.offsetAt(range.start);
+            const formatterSettings = settings && settings.javascript && settings.javascript.format;
+            const initialIndentLevel = computeInitialIndent(document, range, formatParams);
+            const formatSettings = convertOptions(formatParams, formatterSettings, initialIndentLevel + 1);
+            const start = jsDocument.offsetAt(range.start);
             let end = jsDocument.offsetAt(range.end);
             let lastLineRange = null;
             if (range.end.line > range.start.line && (range.end.character === 0 || (0, strings_1.isWhitespaceOnly)(jsDocument.getText().substr(end - range.end.character, range.end.character)))) {
                 end -= range.end.character;
                 lastLineRange = languageModes_1.Range.create(languageModes_1.Position.create(range.end.line, 0), range.end);
             }
-            let edits = jsLanguageService.getFormattingEditsForRange(jsDocument.uri, start, end, formatSettings);
+            const edits = jsLanguageService.getFormattingEditsForRange(jsDocument.uri, start, end, formatSettings);
             if (edits) {
-                let result = [];
-                for (let edit of edits) {
+                const result = [];
+                for (const edit of edits) {
                     if (edit.span.start >= start && edit.span.start + edit.span.length <= end) {
                         result.push({
                             range: convertRange(jsDocument, edit.span),
@@ -344,15 +348,15 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
         async getFoldingRanges(document) {
             const jsDocument = jsDocuments.get(document);
             const jsLanguageService = await host.getLanguageService(jsDocument);
-            let spans = jsLanguageService.getOutliningSpans(jsDocument.uri);
-            let ranges = [];
-            for (let span of spans) {
-                let curr = convertRange(jsDocument, span.textSpan);
-                let startLine = curr.start.line;
-                let endLine = curr.end.line;
+            const spans = jsLanguageService.getOutliningSpans(jsDocument.uri);
+            const ranges = [];
+            for (const span of spans) {
+                const curr = convertRange(jsDocument, span.textSpan);
+                const startLine = curr.start.line;
+                const endLine = curr.end.line;
                 if (startLine < endLine) {
-                    let foldingRange = { startLine, endLine };
-                    let match = document.getText(curr).match(/^\s*\/(?:(\/\s*#(?:end)?region\b)|(\*|\/))/);
+                    const foldingRange = { startLine, endLine };
+                    const match = document.getText(curr).match(/^\s*\/(?:(\/\s*#(?:end)?region\b)|(\*|\/))/);
                     if (match) {
                         foldingRange.kind = match[1] ? languageModes_1.FoldingRangeKind.Region : languageModes_1.FoldingRangeKind.Comment;
                     }
@@ -491,13 +495,13 @@ function convertOptions(options, formatSettings, initialIndentLevel) {
     };
 }
 function computeInitialIndent(document, range, options) {
-    let lineStart = document.offsetAt(languageModes_1.Position.create(range.start.line, 0));
-    let content = document.getText();
+    const lineStart = document.offsetAt(languageModes_1.Position.create(range.start.line, 0));
+    const content = document.getText();
     let i = lineStart;
     let nChars = 0;
-    let tabSize = options.tabSize || 4;
+    const tabSize = options.tabSize || 4;
     while (i < content.length) {
-        let ch = content.charAt(i);
+        const ch = content.charAt(i);
         if (ch === ' ') {
             nChars++;
         }

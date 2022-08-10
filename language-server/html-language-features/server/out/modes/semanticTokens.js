@@ -11,7 +11,7 @@ function newSemanticTokenProvider(languageModes) {
     // combined legend across modes
     const legend = { types: [], modifiers: [] };
     const legendMappings = {};
-    for (let mode of languageModes.getAllModes()) {
+    for (const mode of languageModes.getAllModes()) {
         if (mode.getSemanticTokenLegend && mode.getSemanticTokens) {
             const modeLegend = mode.getSemanticTokenLegend();
             legendMappings[mode.getId()] = { types: createMapping(modeLegend.types, legend.types), modifiers: createMapping(modeLegend.modifiers, legend.modifiers) };
@@ -21,13 +21,13 @@ function newSemanticTokenProvider(languageModes) {
         legend,
         async getSemanticTokens(document, ranges) {
             const allTokens = [];
-            for (let mode of languageModes.getAllModesInDocument(document)) {
+            for (const mode of languageModes.getAllModesInDocument(document)) {
                 if (mode.getSemanticTokens) {
                     const mapping = legendMappings[mode.getId()];
                     const tokens = await mode.getSemanticTokens(document);
                     applyTypesMapping(tokens, mapping.types);
                     applyModifiersMapping(tokens, mapping.modifiers);
-                    for (let token of tokens) {
+                    for (const token of tokens) {
                         allTokens.push(token);
                     }
                 }
@@ -54,14 +54,14 @@ function createMapping(origLegend, newLegend) {
 }
 function applyTypesMapping(tokens, typesMapping) {
     if (typesMapping) {
-        for (let token of tokens) {
+        for (const token of tokens) {
             token.typeIdx = typesMapping[token.typeIdx];
         }
     }
 }
 function applyModifiersMapping(tokens, modifiersMapping) {
     if (modifiersMapping) {
-        for (let token of tokens) {
+        for (const token of tokens) {
             let modifierSet = token.modifierSet;
             if (modifierSet) {
                 let index = 0;
@@ -90,7 +90,7 @@ function encodeTokens(tokens, ranges, document) {
     let currRange = ranges[rangeIndex++];
     let prefLine = 0;
     let prevChar = 0;
-    let encodedResult = [];
+    const encodedResult = [];
     for (let k = 0; k < resultTokens.length && currRange; k++) {
         const curr = resultTokens[k];
         const start = curr.start;
