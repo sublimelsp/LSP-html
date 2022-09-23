@@ -5,13 +5,12 @@
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getNodeFileFS = void 0;
-const requests_1 = require("../requests");
 const vscode_uri_1 = require("vscode-uri");
 const fs = require("fs");
 const vscode_css_languageservice_1 = require("vscode-css-languageservice");
 function getNodeFileFS() {
     function ensureFileUri(location) {
-        if ((0, requests_1.getScheme)(location) !== 'file') {
+        if (!location.startsWith('file:')) {
             throw new Error('fileSystemProvider can only handle file URLs');
         }
     }
