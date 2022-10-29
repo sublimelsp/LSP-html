@@ -51,4 +51,6 @@ class LspHtmlPlugin(NpmClientHandler):
             with open(file_path, 'r', encoding='utf-8') as fd:
                 respond(fd.read())
                 return
+        else:
+            print('LSP-html: The html.customData file "{}" does not exist'.format(file_path))
         respond('')
