@@ -13,6 +13,7 @@ class CustomDataChangedNotification:
     def create(cls, params: Params) -> Notification:
         return Notification(cls.Type, [params])
 
+
 class CustomDataRequest:
     Type = 'html/customDataContent'
     Params = Tuple[FilePath]
