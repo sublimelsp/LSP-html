@@ -2,6 +2,7 @@
 	"command": ["${node_bin}", "${server_path}", "--stdio"],
 	"schemes": ["file", "buffer", "res"],
 	"initializationOptions": {
+		"handledSchemas": ["file"],
 		"embeddedLanguages": {
 			"css": true,
 			"javascript": true,
