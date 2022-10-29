@@ -18,6 +18,39 @@
           "definitions": {
             "PluginConfig": {
               "properties": {
+                "initializationOptions": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "embeddedLanguages": {
+                      "type": "object",
+                      "properties": {
+                        "css": {
+                          "type": "boolean",
+                          "default": true
+                        },
+                        "javascript": {
+                          "type": "boolean",
+                          "default": true
+                        }
+                      },
+                      "additionalProperties": false,
+                    },
+                    "handledSchemas": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "default": ["file"],
+                      "markdownDescription": "Types of protocols that the server supports for URIs/paths provided through `html.customData`."
+                    },
+                    "provideFormatter": {
+                      "type": "boolean",
+                      "default": true,
+                      "markdownDescription": "Whether server provides formatter capabilities."
+                    }
+                  },
+                },
                 "settings": {
                   // Dissabling this because this server also accepts settings from LSP-css.
                   // "additionalProperties": false,
