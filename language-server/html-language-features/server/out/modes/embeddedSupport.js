@@ -152,7 +152,7 @@ function getEmbeddedDocument(document, contents, languageId, ignoreAttributeValu
     for (const c of contents) {
         if (c.languageId === languageId && (!ignoreAttributeValues || !c.attributeValue)) {
             result = substituteWithWhitespace(result, currentPos, c.start, oldContent, lastSuffix, getPrefix(c));
-            result += oldContent.substring(c.start, c.end);
+            result += updateContent(c, oldContent.substring(c.start, c.end));
             currentPos = c.end;
             lastSuffix = getSuffix(c);
         }
@@ -177,10 +177,16 @@ function getSuffix(c) {
     }
     return '';
 }
+function updateContent(c, content) {
+    if (!c.attributeValue && c.languageId === 'javascript') {
+        return content.replace(`<!--`, `/* `).replace(`-->`, ` */`);
+    }
+    return content;
+}
 function substituteWithWhitespace(result, start, end, oldContent, before, after) {
-    let accumulatedWS = 0;
     result += before;
-    for (let i = start + before.length; i < end; i++) {
+    let accumulatedWS = -before.length; // start with a negative value to account for the before string
+    for (let i = start; i < end; i++) {
         const ch = oldContent[i];
         if (ch === '\n' || ch === '\r') {
             // only write new lines, skip the whitespace
