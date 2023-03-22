@@ -22,7 +22,7 @@ class LspHtmlPlugin(NpmClientHandler):
         "server",
         "out",
         "node",
-        "htmlServerMain.js",
+        "htmlServerNodeMain.js",
     )
 
     @classmethod

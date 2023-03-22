@@ -57,7 +57,8 @@ pushd "${SRC_DIR}" || exit
 npm install
 
 # @see https://github.com/microsoft/vscode/blob/main/extensions/package.json
-npm install typescript@^4.9.4
+npm install typescript@^5.0.2
+npm install --include=dev @types/node
 
 popd || exit
 
@@ -76,8 +77,8 @@ cat << EOF > tsconfig.mod.json
         "outDir": "./out",
     },
     "include": [
-        "src/node/htmlServerMain.ts"
-    ]
+        "src/node/htmlServerNodeMain.ts",
+    ],
 }
 EOF
 
