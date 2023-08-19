@@ -49,7 +49,11 @@ async function format(languageModes, document, formatRange, formattingOptions, s
     // perform a html format and apply changes to a new document
     const htmlMode = languageModes.getMode('html');
     const htmlEdits = await htmlMode.format(document, formatRange, formattingOptions, settings);
-    const htmlFormattedContent = languageModes_1.TextDocument.applyEdits(document, htmlEdits);
+    let htmlFormattedContent = languageModes_1.TextDocument.applyEdits(document, htmlEdits);
+    if (formattingOptions.insertFinalNewline && endOffset === content.length && !htmlFormattedContent.endsWith('\n')) {
+        htmlFormattedContent = htmlFormattedContent + '\n';
+        htmlEdits.push(languageModes_1.TextEdit.insert(endPos, '\n'));
+    }
     const newDocument = languageModes_1.TextDocument.create(document.uri + '.tmp', document.languageId, document.version, htmlFormattedContent);
     try {
         // run embedded formatters on html formatted content: - formatters see correct initial indent
