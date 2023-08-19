@@ -94,12 +94,17 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
     const jsDocuments = (0, languageModelCache_1.getLanguageModelCache)(10, 60, document => documentRegions.get(document).getEmbeddedDocument(languageId));
     const host = getLanguageServiceHost(languageId === 'javascript' ? ts.ScriptKind.JS : ts.ScriptKind.TS);
     const globalSettings = {};
+    function updateHostSettings(settings) {
+        const hostSettings = host.getCompilationSettings();
+        hostSettings.experimentalDecorators = settings?.['js/ts']?.implicitProjectConfig?.experimentalDecorators;
+        hostSettings.strictNullChecks = settings?.['js/ts']?.implicitProjectConfig.strictNullChecks;
+    }
     return {
         getId() {
             return languageId;
         },
         async doValidation(document, settings = workspace.settings) {
-            host.getCompilationSettings()['experimentalDecorators'] = settings && settings.javascript && settings.javascript.implicitProjectConfig.experimentalDecorators;
+            updateHostSettings(settings);
             const jsDocument = jsDocuments.get(document);
             const languageService = await host.getLanguageService(jsDocument);
             const syntaxDiagnostics = languageService.getSyntacticDiagnostics(jsDocument.uri);

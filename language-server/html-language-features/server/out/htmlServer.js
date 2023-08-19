@@ -69,8 +69,9 @@ function startServer(connection, runtime) {
             let promise = documentSettings[textDocument.uri];
             if (!promise) {
                 const scopeUri = textDocument.uri;
-                const configRequestParam = { items: [{ scopeUri, section: 'css' }, { scopeUri, section: 'html' }, { scopeUri, section: 'javascript' }] };
-                promise = connection.sendRequest(vscode_languageserver_1.ConfigurationRequest.type, configRequestParam).then(s => ({ css: s[0], html: s[1], javascript: s[2] }));
+                const sections = ['css', 'html', 'javascript', 'js/ts'];
+                const configRequestParam = { items: sections.map(section => ({ scopeUri, section })) };
+                promise = connection.sendRequest(vscode_languageserver_1.ConfigurationRequest.type, configRequestParam).then(s => ({ css: s[0], html: s[1], javascript: s[2], 'js/ts': s[3] }));
                 documentSettings[textDocument.uri] = promise;
             }
             return promise;
