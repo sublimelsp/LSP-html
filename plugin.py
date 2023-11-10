@@ -27,7 +27,7 @@ class LspHtmlPlugin(NpmClientHandler):
 
     @classmethod
     def required_node_version(cls) -> str:
-        return '>=14'
+        return ">=14"
 
     def on_ready(self, api: ApiWrapperInterface) -> None:
         session = self.weaksession()
@@ -36,7 +36,7 @@ class LspHtmlPlugin(NpmClientHandler):
         self.resolve_custom_data_paths(session)
 
     def resolve_custom_data_paths(self, session: Session) -> None:
-        custom_data_paths = session.config.settings.get('html.customData')  # type: List[str]
+        custom_data_paths = session.config.settings.get("html.customData")  # type: List[str]
         resolved_custom_data_paths = []  # type: List[str]
         for folder in session.get_workspace_folders():
             resolved_custom_data_paths.extend([path.abspath(path.join(folder.path, p)) for p in custom_data_paths])
@@ -46,9 +46,9 @@ class LspHtmlPlugin(NpmClientHandler):
     def on_custom_data_content_async(
         self, params: CustomDataRequest.Params, respond: Callable[[CustomDataRequest.Response], None]
     ) -> None:
-        file_path, = params
+        (file_path,) = params
         if path.isfile(file_path):
-            with open(file_path, 'r', encoding='utf-8') as fd:
+            with open(file_path, "r", encoding="utf-8") as fd:
                 respond(fd.read())
                 return
-        respond('')
+        respond("")
