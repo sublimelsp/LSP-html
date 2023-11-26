@@ -9,11 +9,11 @@ const vscode_languageserver_1 = require("vscode-languageserver");
 var FsStatRequest;
 (function (FsStatRequest) {
     FsStatRequest.type = new vscode_languageserver_1.RequestType('fs/stat');
-})(FsStatRequest = exports.FsStatRequest || (exports.FsStatRequest = {}));
+})(FsStatRequest || (exports.FsStatRequest = FsStatRequest = {}));
 var FsReadDirRequest;
 (function (FsReadDirRequest) {
     FsReadDirRequest.type = new vscode_languageserver_1.RequestType('fs/readDir');
-})(FsReadDirRequest = exports.FsReadDirRequest || (exports.FsReadDirRequest = {}));
+})(FsReadDirRequest || (exports.FsReadDirRequest = FsReadDirRequest = {}));
 var FileType;
 (function (FileType) {
     /**
@@ -32,7 +32,7 @@ var FileType;
      * A symbolic link to a file.
      */
     FileType[FileType["SymbolicLink"] = 64] = "SymbolicLink";
-})(FileType = exports.FileType || (exports.FileType = {}));
+})(FileType || (exports.FileType = FileType = {}));
 function getFileSystemProvider(handledSchemas, connection, runtime) {
     const fileFs = runtime.fileFs && handledSchemas.indexOf('file') !== -1 ? runtime.fileFs : undefined;
     return {

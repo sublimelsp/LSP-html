@@ -54,10 +54,11 @@ popd || exit
 
 pushd "${SRC_DIR}" || exit
 
-npm install
+npm install --lockfile-version 2
 
 # @see https://github.com/microsoft/vscode/blob/main/extensions/package.json
-npm install typescript@^4.8.4
+npm install --lockfile-version 2 typescript@^5.2.0-dev.20230807
+npm install --lockfile-version 2 --include=dev @types/node
 
 popd || exit
 
@@ -76,8 +77,8 @@ cat << EOF > tsconfig.mod.json
         "outDir": "./out",
     },
     "include": [
-        "src/node/htmlServerMain.ts"
-    ]
+        "src/node/htmlServerNodeMain.ts",
+    ],
 }
 EOF
 
