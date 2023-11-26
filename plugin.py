@@ -1,4 +1,5 @@
 from .types import CustomDataChangedNotification, CustomDataRequest
+from LSP.plugin import Session
 from LSP.plugin.core.typing import Callable, List
 from lsp_utils import ApiWrapperInterface, NpmClientHandler, request_handler
 from os import path
@@ -34,7 +35,7 @@ class LspHtmlPlugin(NpmClientHandler):
             return
         self.resolve_custom_data_paths(session)
 
-    def resolve_custom_data_paths(self, session) -> None:
+    def resolve_custom_data_paths(self, session: Session) -> None:
         custom_data_paths = session.config.settings.get("html.customData")  # type: List[str]
         resolved_custom_data_paths = []  # type: List[str]
         for folder in session.get_workspace_folders():
