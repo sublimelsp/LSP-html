@@ -87,7 +87,7 @@ function getLanguageServiceHost(scriptKind) {
     };
 }
 const ignoredErrors = [
-    1108,
+    1108, /* A_return_statement_can_only_be_used_within_a_function_body_1108 */
     2792, /* Cannot_find_module_0_Did_you_mean_to_set_the_moduleResolution_option_to_node_or_to_add_aliases_to_the_paths_option */
 ];
 function getJavaScriptMode(documentRegions, languageId, workspace) {
