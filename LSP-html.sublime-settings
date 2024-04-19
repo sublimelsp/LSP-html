@@ -144,12 +144,4 @@
 	// ST4 configuration
 	"selector": "text.html.basic | embedding.php",
 	"feature_selector": "text.html - source.php",
-	// ST3 configuration
-	"languages": [
-		{
-			"languageId": "html",
-			"scopes": ["text.html.basic"],
-			"syntaxes": ["Packages/HTML/HTML.sublime-syntax"],
-		},
-	],
 }
