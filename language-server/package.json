@@ -10,7 +10,7 @@
   "main": "./out/node/htmlServerMain",
   "dependencies": {
     "@vscode/l10n": "^0.0.18",
-    "typescript": "^5.4.5",
+    "typescript": "^5.5.0-dev.20240603",
     "vscode-css-languageservice": "^6.2.13",
     "vscode-html-languageservice": "^5.2.0",
     "vscode-languageserver": "^10.0.0-next.2",
@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^9.1.1",
-    "@types/node": "18.x"
+    "@types/node": "20.x"
   },
   "scripts": {
     "compile": "npx gulp compile-extension:html-language-features-server",

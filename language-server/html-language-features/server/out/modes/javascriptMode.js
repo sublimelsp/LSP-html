@@ -4,7 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getJavaScriptMode = void 0;
+exports.getJavaScriptMode = getJavaScriptMode;
 const languageModelCache_1 = require("../languageModelCache");
 const languageModes_1 = require("./languageModes");
 const strings_1 = require("../utils/strings");
@@ -387,7 +387,6 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
         }
     };
 }
-exports.getJavaScriptMode = getJavaScriptMode;
 function convertRange(document, span) {
     if (typeof span.start === 'undefined') {
         const pos = document.positionAt(0);

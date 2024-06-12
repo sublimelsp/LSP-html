@@ -4,7 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getHTMLMode = void 0;
+exports.getHTMLMode = getHTMLMode;
 const languageModelCache_1 = require("../languageModelCache");
 function getHTMLMode(htmlLanguageService, workspace) {
     const htmlDocuments = (0, languageModelCache_1.getLanguageModelCache)(10, 60, document => htmlLanguageService.parseHTMLDocument(document));
@@ -88,7 +88,6 @@ function getHTMLMode(htmlLanguageService, workspace) {
         }
     };
 }
-exports.getHTMLMode = getHTMLMode;
 function merge(src, dst) {
     if (src) {
         for (const key in src) {

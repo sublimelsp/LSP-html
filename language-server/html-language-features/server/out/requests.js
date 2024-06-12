@@ -4,7 +4,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFileSystemProvider = exports.FileType = exports.FsReadDirRequest = exports.FsStatRequest = void 0;
+exports.FileType = exports.FsReadDirRequest = exports.FsStatRequest = void 0;
+exports.getFileSystemProvider = getFileSystemProvider;
 const vscode_languageserver_1 = require("vscode-languageserver");
 var FsStatRequest;
 (function (FsStatRequest) {
@@ -51,4 +52,3 @@ function getFileSystemProvider(handledSchemas, connection, runtime) {
         }
     };
 }
-exports.getFileSystemProvider = getFileSystemProvider;

@@ -4,7 +4,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDocumentRegions = exports.CSS_STYLE_RULE = void 0;
+exports.CSS_STYLE_RULE = void 0;
+exports.getDocumentRegions = getDocumentRegions;
 const languageModes_1 = require("./languageModes");
 exports.CSS_STYLE_RULE = '__';
 function getDocumentRegions(languageService, document) {
@@ -76,7 +77,6 @@ function getDocumentRegions(languageService, document) {
         getImportedScripts: () => importedScripts
     };
 }
-exports.getDocumentRegions = getDocumentRegions;
 function getLanguageRanges(document, regions, range) {
     const result = [];
     let currentPos = range ? range.start : languageModes_1.Position.create(0, 0);

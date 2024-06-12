@@ -4,7 +4,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.binarySearch = exports.mergeSort = exports.contains = exports.pushAll = void 0;
+exports.pushAll = pushAll;
+exports.contains = contains;
+exports.mergeSort = mergeSort;
+exports.binarySearch = binarySearch;
 function pushAll(to, from) {
     if (from) {
         for (const e of from) {
@@ -12,11 +15,9 @@ function pushAll(to, from) {
         }
     }
 }
-exports.pushAll = pushAll;
 function contains(arr, val) {
     return arr.indexOf(val) !== -1;
 }
-exports.contains = contains;
 /**
  * Like `Array#sort` but always stable. Usually runs a little slower `than Array#sort`
  * so only use this when actually needing stable sort.
@@ -25,7 +26,6 @@ function mergeSort(data, compare) {
     _divideAndMerge(data, compare);
     return data;
 }
-exports.mergeSort = mergeSort;
 function _divideAndMerge(data, compare) {
     if (data.length <= 1) {
         // sorted
@@ -74,4 +74,3 @@ function binarySearch(array, key, comparator) {
     }
     return -(low + 1);
 }
-exports.binarySearch = binarySearch;

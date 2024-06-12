@@ -4,7 +4,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSemanticTokens = exports.getSemanticTokenLegend = void 0;
+exports.getSemanticTokenLegend = getSemanticTokenLegend;
+exports.getSemanticTokens = getSemanticTokens;
 function getSemanticTokenLegend() {
     if (tokenTypes.length !== 12 /* TokenType._ */) {
         console.warn('TokenType has added new entries.');
@@ -14,7 +15,6 @@ function getSemanticTokenLegend() {
     }
     return { types: tokenTypes, modifiers: tokenModifiers };
 }
-exports.getSemanticTokenLegend = getSemanticTokenLegend;
 function* getSemanticTokens(jsLanguageService, document, fileName) {
     const { spans } = jsLanguageService.getEncodedSemanticClassifications(fileName, { start: 0, length: document.getText().length }, '2020');
     for (let i = 0; i < spans.length;) {
@@ -35,7 +35,6 @@ function* getSemanticTokens(jsLanguageService, document, fileName) {
         };
     }
 }
-exports.getSemanticTokens = getSemanticTokens;
 function getTokenTypeFromClassification(tsClassification) {
     if (tsClassification > 255 /* TokenEncodingConsts.modifierMask */) {
         return (tsClassification >> 8 /* TokenEncodingConsts.typeOffset */) - 1;

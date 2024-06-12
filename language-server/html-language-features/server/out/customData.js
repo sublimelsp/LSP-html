@@ -4,7 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetchHTMLDataProviders = void 0;
+exports.fetchHTMLDataProviders = fetchHTMLDataProviders;
 const vscode_html_languageservice_1 = require("vscode-html-languageservice");
 function fetchHTMLDataProviders(dataPaths, requestService) {
     const providers = dataPaths.map(async (p) => {
@@ -18,7 +18,6 @@ function fetchHTMLDataProviders(dataPaths, requestService) {
     });
     return Promise.all(providers);
 }
-exports.fetchHTMLDataProviders = fetchHTMLDataProviders;
 function parseHTMLData(id, source) {
     let rawData;
     try {

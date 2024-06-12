@@ -4,7 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSelectionRanges = void 0;
+exports.getSelectionRanges = getSelectionRanges;
 const languageModes_1 = require("./languageModes");
 const positions_1 = require("../utils/positions");
 async function getSelectionRanges(languageModes, document, positions) {
@@ -24,4 +24,3 @@ async function getSelectionRanges(languageModes, document, positions) {
         return htmlRange || languageModes_1.SelectionRange.create(languageModes_1.Range.create(position, position));
     }));
 }
-exports.getSelectionRanges = getSelectionRanges;

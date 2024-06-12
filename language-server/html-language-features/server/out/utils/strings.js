@@ -4,7 +4,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isNewlineCharacter = exports.isEOL = exports.isWhitespaceOnly = exports.repeat = exports.endsWith = exports.startsWith = exports.getWordAtText = void 0;
+exports.getWordAtText = getWordAtText;
+exports.startsWith = startsWith;
+exports.endsWith = endsWith;
+exports.repeat = repeat;
+exports.isWhitespaceOnly = isWhitespaceOnly;
+exports.isEOL = isEOL;
+exports.isNewlineCharacter = isNewlineCharacter;
 function getWordAtText(text, offset, wordDefinition) {
     let lineStart = offset;
     while (lineStart > 0 && !isNewlineCharacter(text.charCodeAt(lineStart - 1))) {
@@ -24,7 +30,6 @@ function getWordAtText(text, offset, wordDefinition) {
     }
     return { start: offset, length: 0 };
 }
-exports.getWordAtText = getWordAtText;
 function startsWith(haystack, needle) {
     if (haystack.length < needle.length) {
         return false;
@@ -36,7 +41,6 @@ function startsWith(haystack, needle) {
     }
     return true;
 }
-exports.startsWith = startsWith;
 function endsWith(haystack, needle) {
     const diff = haystack.length - needle.length;
     if (diff > 0) {
@@ -49,7 +53,6 @@ function endsWith(haystack, needle) {
         return false;
     }
 }
-exports.endsWith = endsWith;
 function repeat(value, count) {
     let s = '';
     while (count > 0) {
@@ -61,18 +64,14 @@ function repeat(value, count) {
     }
     return s;
 }
-exports.repeat = repeat;
 function isWhitespaceOnly(str) {
     return /^\s*$/.test(str);
 }
-exports.isWhitespaceOnly = isWhitespaceOnly;
 function isEOL(content, offset) {
     return isNewlineCharacter(content.charCodeAt(offset));
 }
-exports.isEOL = isEOL;
 const CR = '\r'.charCodeAt(0);
 const NL = '\n'.charCodeAt(0);
 function isNewlineCharacter(charCode) {
     return charCode === CR || charCode === NL;
 }
-exports.isNewlineCharacter = isNewlineCharacter;

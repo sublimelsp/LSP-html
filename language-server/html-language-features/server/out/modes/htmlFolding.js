@@ -4,7 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFoldingRanges = void 0;
+exports.getFoldingRanges = getFoldingRanges;
 const languageModes_1 = require("./languageModes");
 async function getFoldingRanges(languageModes, document, maxRanges, _cancellationToken) {
     const htmlMode = languageModes.getMode('html');
@@ -39,7 +39,6 @@ async function getFoldingRanges(languageModes, document, maxRanges, _cancellatio
     }
     return result;
 }
-exports.getFoldingRanges = getFoldingRanges;
 function limitRanges(ranges, maxRanges) {
     ranges = ranges.sort((r1, r2) => {
         let diff = r1.startLine - r2.startLine;

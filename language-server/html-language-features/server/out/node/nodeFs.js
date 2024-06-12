@@ -4,7 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNodeFileFS = void 0;
+exports.getNodeFileFS = getNodeFileFS;
 const vscode_uri_1 = require("vscode-uri");
 const fs = require("fs");
 const vscode_css_languageservice_1 = require("vscode-css-languageservice");
@@ -74,4 +74,3 @@ function getNodeFileFS() {
         }
     };
 }
-exports.getNodeFileFS = getNodeFileFS;

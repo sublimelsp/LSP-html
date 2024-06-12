@@ -4,7 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.startServer = void 0;
+exports.startServer = startServer;
 const vscode_languageserver_1 = require("vscode-languageserver");
 const languageModes_1 = require("./modes/languageModes");
 const formatting_1 = require("./modes/formatting");
@@ -491,7 +491,6 @@ function startServer(connection, runtime) {
     // Listen on the connection
     connection.listen();
 }
-exports.startServer = startServer;
 function getFullRange(document) {
     return languageModes_1.Range.create(languageModes_1.Position.create(0, 0), document.positionAt(document.getText().length));
 }

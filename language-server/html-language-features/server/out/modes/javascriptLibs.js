@@ -4,7 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loadLibrary = void 0;
+exports.loadLibrary = loadLibrary;
 const path_1 = require("path");
 const fs_1 = require("fs");
 const contents = {};
@@ -32,4 +32,3 @@ function loadLibrary(name) {
     }
     return content;
 }
-exports.loadLibrary = loadLibrary;

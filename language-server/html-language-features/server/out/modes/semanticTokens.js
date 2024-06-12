@@ -4,7 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.newSemanticTokenProvider = void 0;
+exports.newSemanticTokenProvider = newSemanticTokenProvider;
 const languageModes_1 = require("./languageModes");
 const positions_1 = require("../utils/positions");
 function newSemanticTokenProvider(languageModes) {
@@ -36,7 +36,6 @@ function newSemanticTokenProvider(languageModes) {
         }
     };
 }
-exports.newSemanticTokenProvider = newSemanticTokenProvider;
 function createMapping(origLegend, newLegend) {
     const mapping = [];
     let needsMapping = false;
