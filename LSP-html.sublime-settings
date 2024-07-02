@@ -143,5 +143,5 @@
 	},
 	// ST4 configuration
 	"selector": "text.html.basic | embedding.php",
-	"feature_selector": "text.html - source.php",
+	"priority_selector": "text.html - source.php"
 }
