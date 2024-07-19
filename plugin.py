@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 from collections.abc import Callable
 
+import sublime
 from LSP.plugin import Session, filename_to_uri
 from lsp_utils import ApiWrapperInterface, NpmClientHandler, request_handler
 
@@ -34,6 +35,15 @@ class LspHtmlPlugin(NpmClientHandler):
     @classmethod
     def required_node_version(cls) -> str:
         return ">=14"
+
+    @classmethod
+    def should_ignore(cls, view: sublime.View) -> bool:
+        return bool(
+            # SublimeREPL views
+            view.settings().get("repl")
+            # syntax test files
+            or os.path.basename(view.file_name() or "").startswith("syntax_test")
+        )
 
     def on_ready(self, api: ApiWrapperInterface) -> None:
         session = self.weaksession()
