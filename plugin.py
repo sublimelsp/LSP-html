@@ -4,7 +4,7 @@ import os
 from collections.abc import Callable
 
 import sublime
-from LSP.plugin import Session, filename_to_uri
+from LSP.plugin import Session
 from lsp_utils import ApiWrapperInterface, NpmClientHandler, request_handler
 
 from .data_types import CustomDataChangedNotification, CustomDataRequest
@@ -55,9 +55,7 @@ class LspHtmlPlugin(NpmClientHandler):
         custom_data_paths: list[str] = session.config.settings.get("html.customData")
         resolved_custom_data_paths: list[str] = []
         for folder in session.get_workspace_folders():
-            resolved_custom_data_paths.extend(
-                filename_to_uri(os.path.abspath(os.path.join(folder.path, p))) for p in custom_data_paths
-            )
+            resolved_custom_data_paths.extend(os.path.abspath(os.path.join(folder.path, p)) for p in custom_data_paths)
         session.send_notification(CustomDataChangedNotification.create(resolved_custom_data_paths))
 
     @request_handler(CustomDataRequest.Type)
