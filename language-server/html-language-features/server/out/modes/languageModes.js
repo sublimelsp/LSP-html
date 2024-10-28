@@ -77,7 +77,7 @@ function getLanguageModes(supportedLanguages, workspace, clientCapabilities, req
             return undefined;
         },
         getModesInRange(document, range) {
-            return documentRegions.get(document).getLanguageRanges(range).map(r => {
+            return documentRegions.get(document).getLanguageRanges(range).map((r) => {
                 return {
                     start: r.start,
                     end: r.end,
