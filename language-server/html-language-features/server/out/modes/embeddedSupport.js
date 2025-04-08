@@ -181,6 +181,17 @@ function updateContent(c, content) {
     if (!c.attributeValue && c.languageId === 'javascript') {
         return content.replace(`<!--`, `/* `).replace(`-->`, ` */`);
     }
+    if (c.languageId === 'css') {
+        const quoteEscape = /(&quot;|&#34;)/g;
+        return content.replace(quoteEscape, (match, _, offset) => {
+            const spaces = ' '.repeat(match.length - 1);
+            const afterChar = content[offset + match.length];
+            if (!afterChar || afterChar.includes(' ')) {
+                return `${spaces}"`;
+            }
+            return `"${spaces}`;
+        });
+    }
     return content;
 }
 function substituteWithWhitespace(result, start, end, oldContent, before, after) {
