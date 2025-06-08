@@ -41,10 +41,11 @@ function getDocumentRegions(languageService, document) {
                     importedScripts.push(value);
                 }
                 else if (lastAttributeName === 'type' && lastTagName.toLowerCase() === 'script') {
-                    if (/["'](module|(text|application)\/(java|ecma)script|text\/babel)["']/.test(scanner.getTokenText())) {
+                    const token = scanner.getTokenText();
+                    if (/["'](module|(text|application)\/(java|ecma)script|text\/babel)["']/.test(token) || token === 'module') {
                         languageIdFromType = 'javascript';
                     }
-                    else if (/["']text\/typescript["']/.test(scanner.getTokenText())) {
+                    else if (/["']text\/typescript["']/.test(token)) {
                         languageIdFromType = 'typescript';
                     }
                     else {

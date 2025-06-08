@@ -104,18 +104,24 @@ function getLanguageServiceHost(scriptKind) {
                 return true;
             }
         };
-        return ts.createLanguageService(host);
+        return {
+            service: ts.createLanguageService(host),
+            loadLibrary: libs.loadLibrary,
+        };
     });
     return {
         async getLanguageService(jsDocument) {
             currentTextDocument = jsDocument;
-            return jsLanguageService;
+            return (await jsLanguageService).service;
         },
         getCompilationSettings() {
             return compilerOptions;
         },
+        async loadLibrary(fileName) {
+            return (await jsLanguageService).loadLibrary(fileName);
+        },
         dispose() {
-            jsLanguageService.then(s => s.dispose());
+            jsLanguageService.then(s => s.service.dispose());
         }
     };
 }
@@ -127,6 +133,7 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
     const jsDocuments = (0, languageModelCache_1.getLanguageModelCache)(10, 60, document => documentRegions.get(document).getEmbeddedDocument(languageId));
     const host = getLanguageServiceHost(languageId === 'javascript' ? ts.ScriptKind.JS : ts.ScriptKind.TS);
     const globalSettings = {};
+    const libParentUri = `${languageModes_1.FILE_PROTOCOL}://${languageId}/libs/`;
     function updateHostSettings(settings) {
         const hostSettings = host.getCompilationSettings();
         hostSettings.experimentalDecorators = settings?.['js/ts']?.implicitProjectConfig?.experimentalDecorators;
@@ -316,12 +323,26 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
             const jsLanguageService = await host.getLanguageService(jsDocument);
             const definition = jsLanguageService.getDefinitionAtPosition(jsDocument.uri, jsDocument.offsetAt(position));
             if (definition) {
-                return definition.filter(d => d.fileName === jsDocument.uri).map(d => {
-                    return {
-                        uri: document.uri,
-                        range: convertRange(jsDocument, d.textSpan)
-                    };
-                });
+                return (await Promise.all(definition.map(async (d) => {
+                    if (d.fileName === jsDocument.uri) {
+                        return {
+                            uri: document.uri,
+                            range: convertRange(jsDocument, d.textSpan)
+                        };
+                    }
+                    else {
+                        const libUri = libParentUri + d.fileName;
+                        const content = await host.loadLibrary(d.fileName);
+                        if (!content) {
+                            return undefined;
+                        }
+                        const libDocument = languageModes_1.TextDocument.create(libUri, languageId, 1, content);
+                        return {
+                            uri: libUri,
+                            range: convertRange(libDocument, d.textSpan)
+                        };
+                    }
+                }))).filter(d => !!d);
             }
             return null;
         },
@@ -413,6 +434,12 @@ function getJavaScriptMode(documentRegions, languageId, workspace) {
         },
         getSemanticTokenLegend() {
             return (0, javascriptSemanticTokens_1.getSemanticTokenLegend)();
+        },
+        async getTextDocumentContent(documentUri) {
+            if (documentUri.startsWith(libParentUri)) {
+                return host.loadLibrary(documentUri.substring(libParentUri.length));
+            }
+            return undefined;
         },
         dispose() {
             host.dispose();

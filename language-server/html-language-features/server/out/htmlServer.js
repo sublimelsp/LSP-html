@@ -151,6 +151,9 @@ function startServer(connection, runtime) {
                 documentSelector: null,
                 interFileDependencies: false,
                 workspaceDiagnostics: false
+            },
+            workspace: {
+                textDocumentContent: { schemes: [languageModes_1.FILE_PROTOCOL] }
             }
         };
         return { capabilities };
@@ -487,6 +490,17 @@ function startServer(connection, runtime) {
         (0, customData_1.fetchHTMLDataProviders)(dataPaths, customDataRequestService).then(dataProviders => {
             languageModes.updateDataProviders(dataProviders);
         });
+    });
+    connection.onRequest(vscode_languageserver_1.TextDocumentContentRequest.type, (params, token) => {
+        return (0, runner_1.runSafe)(runtime, async () => {
+            for (const languageMode of languageModes.getAllModes()) {
+                const content = await languageMode.getTextDocumentContent?.(params.uri);
+                if (content) {
+                    return { text: content };
+                }
+            }
+            return null;
+        }, null, `Error while computing text document content for ${params.uri}`, token);
     });
     // Listen on the connection
     connection.listen();
