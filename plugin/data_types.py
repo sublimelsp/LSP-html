@@ -3,13 +3,14 @@ from __future__ import annotations
 from typing import List, Tuple
 
 from LSP.plugin import Notification
+from typing_extensions import TypeAlias
 
-FilePath = str
+FilePath: TypeAlias = str
 
 
 class CustomDataChangedNotification:
     Type = "html/customDataChanged"
-    Params = List[FilePath]
+    Params: TypeAlias = List[FilePath]
 
     @classmethod
     def create(cls, params: Params) -> Notification:
@@ -18,5 +19,5 @@ class CustomDataChangedNotification:
 
 class CustomDataRequest:
     Type = "html/customDataContent"
-    Params = Tuple[FilePath]
-    Response = str
+    Params: TypeAlias = Tuple[FilePath]
+    Response: TypeAlias = str

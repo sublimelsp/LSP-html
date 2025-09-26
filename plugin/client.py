@@ -12,14 +12,6 @@ from .data_types import CustomDataChangedNotification, CustomDataRequest
 assert __package__
 
 
-def plugin_loaded() -> None:
-    LspHtmlPlugin.setup()
-
-
-def plugin_unloaded() -> None:
-    LspHtmlPlugin.cleanup()
-
-
 class LspHtmlPlugin(NpmClientHandler):
     package_name = __package__
     server_directory = "language-server"
