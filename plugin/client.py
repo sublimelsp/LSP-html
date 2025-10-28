@@ -7,13 +7,12 @@ import sublime
 from LSP.plugin import Session
 from lsp_utils import ApiWrapperInterface, NpmClientHandler, request_handler
 
+from .constants import PACKAGE_NAME
 from .data_types import CustomDataChangedNotification, CustomDataRequest
-
-assert __package__
 
 
 class LspHtmlPlugin(NpmClientHandler):
-    package_name = __package__
+    package_name = PACKAGE_NAME
     server_directory = "language-server"
     server_binary_path = os.path.join(
         server_directory,
