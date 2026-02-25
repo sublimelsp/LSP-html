@@ -2,15 +2,17 @@ from __future__ import annotations
 
 import os
 from collections.abc import Callable
+from typing import final, override
 
 import sublime
-from LSP.plugin import Session
+from LSP.plugin import ClientConfig, Session
 from lsp_utils import ApiWrapperInterface, NpmClientHandler, request_handler
 
 from .constants import PACKAGE_NAME
 from .data_types import CustomDataChangedNotification, CustomDataRequest
 
 
+@final
 class LspHtmlPlugin(NpmClientHandler):
     package_name = PACKAGE_NAME
     server_directory = "language-server"
@@ -23,19 +25,21 @@ class LspHtmlPlugin(NpmClientHandler):
         "htmlServerNodeMain.js",
     )
 
+    @override
     @classmethod
     def required_node_version(cls) -> str:
         return ">=14"
 
+    @override
     @classmethod
-    def should_ignore(cls, view: sublime.View) -> bool:
+    def is_applicable(cls, view: sublime.View, config: ClientConfig) -> bool:
         return bool(
-            # SublimeREPL views
-            view.settings().get("repl")
-            # syntax test files
-            or os.path.basename(view.file_name() or "").startswith("syntax_test")
+            super().is_applicable(view, config)
+            # REPL views (https://github.com/sublimelsp/LSP-pyright/issues/343)
+            and not view.settings().get("repl")
         )
 
+    @override
     def on_ready(self, api: ApiWrapperInterface) -> None:
         session = self.weaksession()
         if not session:
