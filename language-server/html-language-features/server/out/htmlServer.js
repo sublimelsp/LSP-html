@@ -82,12 +82,14 @@ function startServer(connection, runtime) {
     // in the passed params the rootPath of the workspace plus the client capabilities
     connection.onInitialize((params) => {
         const initializationOptions = params.initializationOptions || {};
-        workspaceFolders = params.workspaceFolders;
-        if (!Array.isArray(workspaceFolders)) {
+        if (!Array.isArray(params.workspaceFolders)) {
             workspaceFolders = [];
             if (params.rootPath) {
                 workspaceFolders.push({ name: '', uri: vscode_uri_1.URI.file(params.rootPath).toString() });
             }
+        }
+        else {
+            workspaceFolders = params.workspaceFolders;
         }
         const handledSchemas = initializationOptions?.handledSchemas ?? ['file'];
         const fileSystemProvider = (0, requests_1.getFileSystemProvider)(handledSchemas, connection, runtime);
@@ -448,6 +450,7 @@ function startServer(connection, runtime) {
         }, null, `Error while computing rename for ${params.textDocument.uri}`, token);
     });
     connection.languages.onLinkedEditingRange((params, token) => {
+        // eslint-disable-next-line local/code-no-any-casts
         return /* todo remove when microsoft/vscode-languageserver-node#700 fixed */ (0, runner_1.runSafe)(runtime, async () => {
             const document = documents.get(params.textDocument.uri);
             if (document) {
@@ -499,8 +502,8 @@ function startServer(connection, runtime) {
                     return { text: content };
                 }
             }
-            return null;
-        }, null, `Error while computing text document content for ${params.uri}`, token);
+            return { text: '' };
+        }, { text: '' }, `Error while computing text document content for ${params.uri}`, token);
     });
     // Listen on the connection
     connection.listen();
