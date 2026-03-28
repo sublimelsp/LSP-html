@@ -1,5 +1,5 @@
 [project]
-name = "LSP-html"
+name = "lsp-html"
 version = "0.0.0"
 description = "HTML support for Sublime's LSP plugin"
 readme = "README.md"
@@ -11,7 +11,7 @@ dependencies = [
 [dependency-groups]
 dev = [
   "mypy>=1.14",
-  "ruff>=0.13",
+  "ruff>=0.15.8",
   "types-jmespath",
 ]
 
