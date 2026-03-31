@@ -13,7 +13,7 @@ class CustomDataChangedNotification:
     Params: TypeAlias = List[FilePath]
 
     @classmethod
-    def create(cls, params: Params) -> Notification:
+    def create(cls, params: Params) -> Notification[list[Params]]:
         return Notification(cls.Type, [params])
 
 

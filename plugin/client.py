@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 import os
-from collections.abc import Callable
 from typing import final
 
 import sublime
-from LSP.plugin import ClientConfig, Session
-from lsp_utils import ApiWrapperInterface, NpmClientHandler, request_handler
+from LSP.plugin import ClientConfig, Promise, Session, request_handler
+from lsp_utils import ApiWrapperInterface, NpmClientHandler
 from typing_extensions import override
 
 from .constants import PACKAGE_NAME
@@ -55,14 +54,10 @@ class LspHtmlPlugin(NpmClientHandler):
         session.send_notification(CustomDataChangedNotification.create(resolved_custom_data_paths))
 
     @request_handler(CustomDataRequest.Type)
-    def on_custom_data_content_async(
-        self,
-        params: CustomDataRequest.Params,
-        respond: Callable[[CustomDataRequest.Response], None],
-    ) -> None:
+    def on_custom_data_content_async(self, params: CustomDataRequest.Params) -> Promise[CustomDataRequest.Response]:
         (file_path,) = params
         try:
             with open(file_path, encoding="utf-8") as fd:
-                respond(fd.read())
+                return Promise.resolve(fd.read())
         except Exception:
-            respond("")
+            return Promise.resolve("")
