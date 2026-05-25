@@ -22,7 +22,7 @@ class LspHtmlPlugin(LspPlugin):
             cls.plugin_storage_path,
             ResourcePath("Packages", package_name, "language-server"),
             Path("html-language-features", "server", "out", "node", "htmlServerNodeMain.js"),
-            node_version_requirement='>=14',
+            node_version_requirement=">=14",
         )
 
     @override
